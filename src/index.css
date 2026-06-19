@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 2%;
+    --foreground: 40 12% 94%;
+    --card: 240 10% 5%;
+    --card-foreground: 40 12% 94%;
+    --popover: 240 12% 8%;
+    --popover-foreground: 40 12% 94%;
+    --primary: 164 100% 42%;
+    --primary-foreground: 240 10% 2%;
+    --secondary: 240 12% 8%;
+    --secondary-foreground: 40 12% 94%;
+    --muted: 240 5% 55%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 14 100% 55%;
+    --accent-foreground: 40 12% 94%;
+    --destructive: 14 100% 55%;
+    --destructive-foreground: 40 12% 94%;
+    --border: 240 10% 12%;
+    --input: 240 10% 12%;
+    --ring: 164 100% 42%;
+    --radius: 0.625rem;
+    --chart-1: 164 100% 42%;
+    --chart-2: 14 100% 55%;
+    --chart-3: 45 90% 60%;
+    --chart-4: 240 5% 55%;
+    --chart-5: 207 50% 45%;
+    --sidebar-background: 240 10% 5%;
+    --sidebar-foreground: 40 12% 94%;
+    --sidebar-primary: 164 100% 42%;
+    --sidebar-primary-foreground: 240 10% 2%;
+    --sidebar-accent: 240 12% 8%;
+    --sidebar-accent-foreground: 40 12% 94%;
+    --sidebar-border: 240 10% 12%;
+    --sidebar-ring: 164 100% 42%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #060608;
+    color: #F4F1EC;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+  }
+  .font-body {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+  .font-mono-label {
+    font-family: 'DM Mono', 'Courier New', monospace;
+  }
+}
