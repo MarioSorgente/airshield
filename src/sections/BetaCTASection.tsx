@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { FlaskConical, Check, ArrowRight, AlertTriangle } from "lucide-react";
+import { FlaskConical, Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { saveWaitlistSignup } from "@/lib/airshieldDb";
 
 const useCaseOptions = [
   { value: "commuting", label: "Commuting" },
@@ -35,8 +35,7 @@ export default function BetaCTASection() {
     objection: "",
   });
   const [submitted, setSubmitted] = useState(false);
-
-  const waitlistMutation = trpc.airshield.submitWaitlist.useMutation();
+  const [saving, setSaving] = useState(false);
 
   const updateField = (field: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -45,8 +44,9 @@ export default function BetaCTASection() {
   const handleSubmit = async () => {
     if (!formData.name || !formData.email || !formData.city) return;
 
+    setSaving(true);
     try {
-      await waitlistMutation.mutateAsync({
+      await saveWaitlistSignup({
         name: formData.name,
         email: formData.email,
         whatsapp: formData.whatsapp || undefined,
@@ -76,6 +76,8 @@ export default function BetaCTASection() {
       setSubmitted(true);
     } catch (err) {
       console.error("Beta submit failed:", err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -279,10 +281,10 @@ export default function BetaCTASection() {
             {/* Submit */}
             <Button
               onClick={handleSubmit}
-              disabled={!formData.name || !formData.email || !formData.city || waitlistMutation.isPending}
+              disabled={!formData.name || !formData.email || !formData.city || saving}
               className="w-full bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold py-6 text-base rounded-lg transition-all hover:scale-[1.01]"
             >
-              {waitlistMutation.isPending ? "Submitting..." : "Join early access"}
+              {saving ? "Submitting..." : "Join early access"}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
 

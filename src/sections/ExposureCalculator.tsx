@@ -3,14 +3,14 @@ import { Calculator, Clock, MapPin, Bike, AlertTriangle, ArrowRight, Check, Wind
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { saveExposureCalculation } from "@/lib/airshieldDb";
 
 const cities = [
   { name: "Jakarta", pm25: 45.3 },
   { name: "Bali / Denpasar", pm25: 38.7 },
   { name: "Bandung", pm25: 42.1 },
   { name: "Surabaya", pm25: 40.5 },
-  { name: "Yogyakarta", pm35: 36.2 },
+  { name: "Yogyakarta", pm25: 36.2 },
   { name: "Other", pm25: 40.0 },
 ];
 
@@ -38,8 +38,7 @@ export default function ExposureCalculator() {
   const [email, setEmail] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
-  const calcMutation = trpc.airshield.submitExposureCalc.useMutation();
+  const [saving, setSaving] = useState(false);
 
   const cityData = cities.find((c) => c.name === city);
   const pm25Level = cityData?.pm25 || 40;
@@ -70,8 +69,9 @@ export default function ExposureCalculator() {
 
   const handleSubmitBeta = async () => {
     if (!email) return;
+    setSaving(true);
     try {
-      await calcMutation.mutateAsync({
+      await saveExposureCalculation({
         city,
         minutesPerDay,
         daysPerWeek,
@@ -96,6 +96,8 @@ export default function ExposureCalculator() {
       setSubmitted(true);
     } catch (err) {
       console.error("Submit failed:", err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -326,10 +328,10 @@ export default function ExposureCalculator() {
                   />
                   <Button
                     onClick={handleSubmitBeta}
-                    disabled={!email || calcMutation.isPending}
+                    disabled={!email || saving}
                     className="bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold px-6"
                   >
-                    {calcMutation.isPending ? "Saving..." : "Send me beta access"}
+                    {saving ? "Saving..." : "Send me beta access"}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>

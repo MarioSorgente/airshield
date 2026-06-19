@@ -1,0 +1,23 @@
+rules_version = '2';
+
+// AirShield is a public lead-capture landing page.
+// The browser may CREATE documents in the form collections below, but nobody
+// can read, update, or delete them — leads are viewed only in the Firebase
+// console (or via the Admin SDK). This keeps collected emails/WhatsApp private.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{collection}/{docId} {
+      allow create: if collection in [
+        'waitlist_signups',
+        'exposure_calculations',
+        'price_responses',
+        'variant_selections',
+        'filter_subscriptions',
+        'use_case_selections',
+        'objection_selections',
+        'early_access_reservations'
+      ];
+      allow read, update, delete: if false;
+    }
+  }
+}

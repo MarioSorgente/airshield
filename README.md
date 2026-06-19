@@ -1,96 +1,128 @@
-# 3D Todo Fullstack Template
+# AirShield
 
-A fullstack todo / timer app named **CHRONOS** with a full-viewport WebGL visual — a GPU-driven 3D sphere (or torus-knot particle sculpture) that reacts in real time to the running timer. Supports three timer modes (timer, stopwatch, pomodoro), four visual styles (blob, lattice, metamorph, particles), and four color themes (blue, teal, rose, amber).
+Market-validation landing page for **AirShield One**, a concept full-face motorcycle helmet with integrated air filtration, aimed at Indonesian riders. The page collects waitlist signups, exposure-calculator results, pricing feedback, and other research responses.
 
-## Features
+Persistence is **Firebase Firestore**, written directly from the browser with the Firebase Web SDK — there is no backend server.
 
-- Three timer modes: countdown timer, stopwatch, pomodoro
-- Four WebGL visual modes, switchable at runtime:
-  - **Blob** — FBM noise sphere
-  - **Lattice** — crystal field
-  - **Metamorph** — Perlin + wireframe cage
-  - **Particles** — torus-knot point sculpture with mouse-driven rotation
-- Four color themes (blue, teal, rose, amber) that recolor both the UI and the shader
-- Todo list with per-item durations (click a todo to load its timer)
-- Auth-gated per-user todo persistence via tRPC + MySQL
-- Live shader parameters (fluid density, turbulence, hue shift, breath rate) with sliders
-
-## Tech Stack
+## Tech stack
 
 - React 19 + TypeScript + Vite
-- Tailwind CSS v3 + shadcn/ui
-- Three.js + @react-three/fiber + @react-three/drei
-- Custom GLSL vertex + fragment shaders in `src/shaders/`
-- tRPC 11 + Hono + Drizzle ORM + MySQL
-- Kimi OAuth 2.0 authentication
-- React Router v7
+- Tailwind CSS v3 + shadcn/ui (Radix)
+- Three.js / @react-three/fiber (hero visuals)
+- Firebase Firestore (the only persistence layer)
+- Deployed as a static SPA on Vercel
 
-## Quick Start
+## Data model
 
-1. Clone / extract this template
-2. Install dependencies: `npm install`
-3. Copy `.env.example` to `.env` and fill in `DATABASE_URL` and Kimi OAuth credentials
-4. Run database migrations: `npx drizzle-kit push`
-5. Run the dev server: `npm run dev`
-6. Build for production: `npm run build`
+Every form writes one document (with a server `createdAt` timestamp) to a Firestore collection via a helper in [`src/lib/airshieldDb.ts`](src/lib/airshieldDb.ts):
 
-## Configuration
+| Collection | Written by |
+| --- | --- |
+| `waitlist_signups` | Beta CTA form |
+| `exposure_calculations` | Exposure calculator |
+| `price_responses` | Price test |
+| `variant_selections` | Product card variant picker |
+| `filter_subscriptions` | Filter subscription test |
+| `use_case_selections` | Use-case segmentation |
+| `objection_selections` | Objection capture + "keep me updated" email |
+| `early_access_reservations` | Hero + Product card reserve / WhatsApp |
 
-This template does not use `src/config.ts`. All content is inline English UI strings — edit them directly in the component files:
+Form events are also mirrored to `localStorage` (see [`src/lib/tracking.ts`](src/lib/tracking.ts)) as an offline backup and as a hook for future analytics (GA / Meta Pixel).
 
-- **`src/App.tsx`** — timer state labels, `VISUAL MODE` chrome, main shell, `SYS // 60 FPS` footer
-- **`src/sections/ControlPanel.tsx`** — brand `CHRONOS`, subtitle, mode labels, state pill, slider names, presets, button text, login/logout affordance
-- **`src/sections/TodoList.tsx`** — `TODO LIST`, empty / completed states, `ADD NEW TASK`, `Task name…`, `DURATION`, `ADD TASK`
-- **`src/types/theme.ts`** — the four named themes (blue / teal / rose / amber) and their panel colors
-- **`api/todo-router.ts`** — server-side starter todos (optional; leave empty for a clean first-login experience)
+---
 
-See `info.md` (outer folder) for layout character limits and the full theme schema.
+## 1. Local setup
 
-## Theme System
+```bash
+# 1. Install dependencies
+npm install
 
-Themes live in `src/types/theme.ts`. When the theme changes, `App.tsx` writes CSS variables (`--panel-dark`, `--panel-mid`, `--panel-light`, `--accent`, `--accent-soft`, `--text-muted`) to `document.documentElement`. Every UI element reads from these variables, and the shaders consume `color1 / color2 / color3` via three.js uniforms — so adding or recoloring a theme only requires editing `src/types/theme.ts`.
+# 2. Create your env file and fill in the Firebase web config (see step 2 below)
+cp .env.example .env
 
-## Database Schema
+# 3. Start the dev server (http://localhost:3000)
+npm run dev
+```
 
-Two tables, defined in `db/schema.ts`:
+Other scripts:
 
-- **`users`** — Kimi OAuth-managed (id, unionId, name, email, avatar, role)
-- **`todos`** — user-owned todos (id, userId, title, durationMs, completedAt, createdAt)
+```bash
+npm run check     # tsc -b (type-check)
+npm run build     # production build → dist/
+npm run preview   # serve the production build locally
+npm run lint      # eslint
+```
 
-Seed script: `db/seed.ts` can bootstrap todos for a given `userId`.
+The app reads these `VITE_FIREBASE_*` variables (all public — they ship to the browser):
 
-## Required Assets
+```
+VITE_FIREBASE_API_KEY
+VITE_FIREBASE_AUTH_DOMAIN
+VITE_FIREBASE_PROJECT_ID
+VITE_FIREBASE_STORAGE_BUCKET
+VITE_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID
+```
 
-No images or videos required. Every visual is procedural (custom GLSL + three.js geometry).
+---
 
-## Project Structure
+## 2. Firebase setup (from zero)
+
+1. Go to <https://console.firebase.google.com> → **Add project** → name it (e.g. `airshield`) → create. Analytics is optional.
+2. In the left sidebar: **Build → Firestore Database → Create database**. Choose **Production mode** and a region close to your users (e.g. `asia-southeast1` / Singapore). Click Enable.
+3. Register a web app: **Project settings (gear icon) → Your apps → Web (`</>`)**. Give it a nickname, register (you do **not** need Firebase Hosting). Copy the `firebaseConfig` values into your `.env`:
+   - `apiKey` → `VITE_FIREBASE_API_KEY`
+   - `authDomain` → `VITE_FIREBASE_AUTH_DOMAIN`
+   - `projectId` → `VITE_FIREBASE_PROJECT_ID`
+   - `storageBucket` → `VITE_FIREBASE_STORAGE_BUCKET`
+   - `messagingSenderId` → `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `appId` → `VITE_FIREBASE_APP_ID`
+4. Deploy the security rules (see next section).
+
+### Deploy Firestore security rules
+
+The rules in [`firestore.rules`](firestore.rules) allow the public to **create** documents in the eight form collections but **deny all reads/updates/deletes** — so submitted leads can't be scraped. You view submissions in the Firebase console (Firestore → Data).
+
+```bash
+npm install -g firebase-tools
+firebase login
+firebase use --add        # select your project, give it an alias like "default"
+firebase deploy --only firestore:rules
+```
+
+> If you skip this, Firestore stays in its locked default state and form writes will be rejected.
+
+---
+
+## 3. Vercel deployment
+
+1. Push this repo to GitHub and **Import** it in Vercel.
+2. Vercel auto-detects Vite. Confirm:
+   - **Framework Preset:** Vite
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+   - **Install Command:** `npm install`
+3. Add the six `VITE_FIREBASE_*` environment variables under **Settings → Environment Variables** (Production + Preview).
+4. Deploy. [`vercel.json`](vercel.json) provides the SPA fallback so all routes serve `index.html`.
+
+---
+
+## Project structure
 
 ```
 .
-├── api/                # tRPC routers (auth, todo), Hono server, Kimi OAuth
-├── contracts/          # Shared tRPC types
-├── db/                 # Drizzle schema, migrations, seed
-├── public/             # Static assets
+├── public/                  # static assets (hero-helmet.jpg, etc.)
 ├── src/
-│   ├── sections/       # ControlPanel, TodoList, MorphCanvas (shader mount)
-│   ├── shaders/        # GLSL vertex + fragment for the four visual modes
-│   ├── types/          # theme.ts
-│   ├── hooks/          # useTodos, useAuth
-│   └── App.tsx
-├── Dockerfile
-├── drizzle.config.ts
-├── .backend-features.json  # Declares ["auth", "db"]
+│   ├── lib/
+│   │   ├── firebase.ts      # Firebase web SDK init from VITE_FIREBASE_*
+│   │   ├── airshieldDb.ts   # Firestore write functions (one per collection)
+│   │   └── tracking.ts      # localStorage event/form backup
+│   ├── sections/            # landing page sections (forms live here)
+│   ├── components/ui/       # shadcn/ui components
+│   ├── App.tsx
+│   └── main.tsx
+├── firestore.rules          # create-only security rules
+├── firebase.json            # points the Firebase CLI at firestore.rules
+├── vercel.json              # SPA fallback
 └── .env.example
 ```
-
-## Design
-
-- Backgrounds and UI tints come from the active theme's CSS variables
-- Fonts: Inter body; ultra-black weight for the big time display; tabular-nums for numbers
-- The center shader geometry scales and rotates based on `isRunning / isCompleted / timeRatio`
-
-## Notes
-
-- Don't modify the GLSL shader files unless you're comfortable in GLSL
-- A brightness floor (`c1 * 0.5 + vec3(...)`) inside the shaders keeps dark regions tinted by the active theme — removing it will regress the amber / rose / teal themes
-- The frontend uses local state for todos by default; when authenticated it switches to the tRPC-backed `api/todo-router.ts` via `useTodos`

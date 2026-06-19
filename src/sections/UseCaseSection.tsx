@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Users, Bike, Briefcase, Heart, Globe, Star, Check, ArrowRight } from "lucide-react";
+import { Bike, Briefcase, Heart, Globe, Star, Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { saveUseCaseSelection } from "@/lib/airshieldDb";
 
 const useCases = [
   {
@@ -50,8 +50,6 @@ export default function UseCaseSection() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const useCaseMutation = trpc.airshield.submitUseCase.useMutation();
-
   const handleSelect = async (caseId: string) => {
     setSelectedCase(caseId);
     trackEvent("use_case_selected", { use_case: caseId });
@@ -61,7 +59,7 @@ export default function UseCaseSection() {
   const submitForm = async () => {
     if (!selectedCase) return;
     try {
-      await useCaseMutation.mutateAsync({
+      await saveUseCaseSelection({
         useCaseName: selectedCase,
         email: email || undefined,
       });
