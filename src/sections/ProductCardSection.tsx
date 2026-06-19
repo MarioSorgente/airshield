@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { saveEarlyAccessReservation, saveVariantSelection } from "@/lib/airshieldDb";
 
 const variants = [
   { name: "Matte Black", color: "#1a1a1a" },
@@ -30,16 +30,14 @@ export default function ProductCardSection() {
   const [whatsapp, setWhatsapp] = useState("");
   const [city, setCity] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [modalType, setModalType] = useState<"reserve" | "whatsapp">("reserve");
-
-  const reserveMutation = trpc.airshield.reserveEarlyAccess.useMutation();
-  const variantMutation = trpc.airshield.submitVariantSelection.useMutation();
 
   const handleVariantSelect = async (variantName: string) => {
     setSelectedVariant(variantName);
     trackEvent("variant_selected", { variant: variantName });
     try {
-      await variantMutation.mutateAsync({ variantName, email: email || undefined });
+      await saveVariantSelection({ variantName, email: email || undefined });
     } catch {
       // Silent fail - localStorage has backup
     }
@@ -60,17 +58,23 @@ export default function ProductCardSection() {
   };
 
   const submitForm = async () => {
-    if (!email) return;
+    // Reserve modal needs email + city; WhatsApp modal allows WhatsApp-only.
+    if (modalType === "reserve" && (!email || !city)) return;
+    if (modalType === "whatsapp" && !whatsapp) return;
+    setSaving(true);
     try {
-      await reserveMutation.mutateAsync({
+      await saveEarlyAccessReservation({
         source: modalType === "reserve" ? "product_card_reserve" : "product_card_whatsapp",
-        email,
+        email: email || undefined,
+        whatsapp: whatsapp || undefined,
+        city: city || undefined,
+        variant: selectedVariant,
       });
       if (modalType === "reserve") {
         trackEvent("email_submitted", { source: "product_card_reserve", email, city });
       }
       if (whatsapp) trackEvent("whatsapp_submitted", { source: "product_card", whatsapp });
-      storeFormData("product_card", { email, whatsapp, city, modalType, timestamp: new Date().toISOString() });
+      storeFormData("product_card", { email, whatsapp, city, variant: selectedVariant, modalType, timestamp: new Date().toISOString() });
       setSubmitted(true);
       setTimeout(() => {
         setShowReserveModal(false);
@@ -82,6 +86,8 @@ export default function ProductCardSection() {
       }, 3000);
     } catch (err) {
       console.error("Submit failed:", err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -243,10 +249,10 @@ export default function ProductCardSection() {
               />
               <Button
                 onClick={submitForm}
-                disabled={!email || !city || reserveMutation.isPending}
+                disabled={!email || !city || saving}
                 className="w-full bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold py-5"
               >
-                {reserveMutation.isPending ? "Saving..." : "Reserve my spot"}
+                {saving ? "Saving..." : "Reserve my spot"}
               </Button>
             </div>
           )}
@@ -291,10 +297,10 @@ export default function ProductCardSection() {
               />
               <Button
                 onClick={submitForm}
-                disabled={!whatsapp || reserveMutation.isPending}
+                disabled={!whatsapp || saving}
                 className="w-full bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold py-5"
               >
-                {reserveMutation.isPending ? "Saving..." : "Notify me on WhatsApp"}
+                {saving ? "Saving..." : "Notify me on WhatsApp"}
               </Button>
             </div>
           )}

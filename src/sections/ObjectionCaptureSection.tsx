@@ -3,7 +3,7 @@ import { AlertCircle, Check, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { saveObjectionSelection } from "@/lib/airshieldDb";
 
 const objections = [
   { id: "too_expensive", label: "Too expensive" },
@@ -24,8 +24,6 @@ export default function ObjectionCaptureSection() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const objectionMutation = trpc.airshield.submitObjection.useMutation();
-
   const toggleObjection = (id: string) => {
     setSelectedObjections((prev) =>
       prev.includes(id) ? prev.filter((o) => o !== id) : [...prev, id]
@@ -40,7 +38,7 @@ export default function ObjectionCaptureSection() {
     // Submit each objection
     for (const obj of selectedObjections) {
       try {
-        await objectionMutation.mutateAsync({
+        await saveObjectionSelection({
           objectionName: obj,
         });
       } catch {
@@ -59,6 +57,11 @@ export default function ObjectionCaptureSection() {
   const handleSubscribe = async () => {
     if (!email) return;
     trackEvent("email_submitted", { source: "objection_updates", email });
+    try {
+      await saveObjectionSelection({ objectionName: "updates_subscription", email });
+    } catch {
+      // Silent fail - localStorage has backup
+    }
     storeFormData("objection_updates", { email, timestamp: new Date().toISOString() });
     setSubmitted(true);
   };

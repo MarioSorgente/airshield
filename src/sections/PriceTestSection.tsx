@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { savePriceResponse } from "@/lib/airshieldDb";
 
 const priceOptions = [
   {
@@ -57,8 +57,7 @@ export default function PriceTestSection() {
   const [city, setCity] = useState("");
   const [useCase, setUseCase] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  const priceMutation = trpc.airshield.submitPriceResponse.useMutation();
+  const [saving, setSaving] = useState(false);
 
   const handlePriceSelect = (priceId: string) => {
     setSelectedPrice(priceId);
@@ -68,8 +67,9 @@ export default function PriceTestSection() {
 
   const submitResponse = async () => {
     if (!selectedPrice) return;
+    setSaving(true);
     try {
-      await priceMutation.mutateAsync({
+      await savePriceResponse({
         priceOption: selectedPrice as "essential" | "standard" | "premium",
         email: email || undefined,
         whatsapp: whatsapp || undefined,
@@ -102,6 +102,8 @@ export default function PriceTestSection() {
       }, 3000);
     } catch (err) {
       console.error("Price submit failed:", err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -230,10 +232,10 @@ export default function PriceTestSection() {
               />
               <Button
                 onClick={submitResponse}
-                disabled={!email || priceMutation.isPending}
+                disabled={!email || saving}
                 className="w-full bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold py-5"
               >
-                {priceMutation.isPending ? "Saving..." : "Notify me"}
+                {saving ? "Saving..." : "Notify me"}
               </Button>
             </div>
           )}

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Filter, Calendar, Check, ArrowRight, DollarSign } from "lucide-react";
+import { Filter, Calendar, Check, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { saveFilterSubscription } from "@/lib/airshieldDb";
 
 const frequencies = [
   {
@@ -40,8 +40,6 @@ export default function FilterSubscriptionSection() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const filterMutation = trpc.airshield.submitFilterSubscription.useMutation();
-
   const handleFreqSelect = (freqId: string) => {
     setSelectedFreq(freqId);
     trackEvent("filter_subscription_selected", { frequency: freqId });
@@ -55,7 +53,7 @@ export default function FilterSubscriptionSection() {
 
   const submitResponse = async (freq: string, acceptance: "yes" | "maybe" | "no") => {
     try {
-      await filterMutation.mutateAsync({
+      await saveFilterSubscription({
         frequency: freq as "reminders_only" | "every_4_weeks" | "every_6_weeks" | "every_8_weeks" | "not_interested",
         email: email || undefined,
         priceAcceptance: acceptance,

@@ -4,17 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { trpc } from "@/providers/trpc";
+import { saveEarlyAccessReservation } from "@/lib/airshieldDb";
 
 export default function HeroSection() {
   const [showModal, setShowModal] = useState(false);
-  const [showExposureModal, setShowExposureModal] = useState(false);
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [city, setCity] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  const reserveMutation = trpc.airshield.reserveEarlyAccess.useMutation();
+  const [saving, setSaving] = useState(false);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -36,10 +34,13 @@ export default function HeroSection() {
 
   const submitReservation = async () => {
     if (!email) return;
+    setSaving(true);
     try {
-      await reserveMutation.mutateAsync({
+      await saveEarlyAccessReservation({
         source: "hero_section",
         email,
+        whatsapp: whatsapp || undefined,
+        city: city || undefined,
       });
       trackEvent("email_submitted", { source: "hero_reserve", email, city });
       if (whatsapp) trackEvent("whatsapp_submitted", { source: "hero_reserve", whatsapp });
@@ -54,6 +55,8 @@ export default function HeroSection() {
       }, 3000);
     } catch (err) {
       console.error("Reservation failed:", err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -209,10 +212,10 @@ export default function HeroSection() {
               />
               <Button
                 onClick={submitReservation}
-                disabled={!email || !city || reserveMutation.isPending}
+                disabled={!email || !city || saving}
                 className="w-full bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold py-5"
               >
-                {reserveMutation.isPending ? "Saving..." : "Reserve my spot"}
+                {saving ? "Saving..." : "Reserve my spot"}
               </Button>
               <p className="text-xs text-center text-[#8A8A93]">
                 No spam. Unsubscribe anytime.
