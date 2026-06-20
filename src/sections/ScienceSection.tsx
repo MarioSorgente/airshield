@@ -75,9 +75,7 @@ export default function ScienceSection() {
             THE SCIENCE BEHIND THE PROBLEM
           </h2>
           <p className="text-[#8A8A93] max-w-3xl mx-auto">
-            We believe in transparency. These are the sources and methodologies that inform our understanding
-            of the problem. We make conservative claims and distinguish between established science and our
-            concept product.
+            These are the sources and methodologies behind the numbers on this page.
           </p>
         </div>
 
@@ -107,45 +105,6 @@ export default function ScienceSection() {
           ))}
         </div>
 
-        {/* Conservative claims note */}
-        <div className="p-6 rounded-xl bg-[#13131A] border border-[#1A1A22] space-y-4">
-          <div className="flex items-start gap-3">
-            <BookOpen className="w-5 h-5 text-[#3A7CA5] flex-shrink-0 mt-0.5" />
-            <div className="space-y-3">
-              <p className="font-medium text-[#3A7CA5]">Our commitment to honest claims</p>
-              <ul className="space-y-2 text-sm text-[#8A8A93]">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#00D4AA] mt-1">•</span>
-                  <span>
-                    We cite established research on PM2.5 health impacts, but we do not claim AirShield
-                    will deliver specific health outcomes until validated through testing.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#00D4AA] mt-1">•</span>
-                  <span>
-                    H13 HEPA media performance is rated in controlled lab conditions. Real-world helmet
-                    performance depends on seal integrity, airflow design, fit, maintenance, and user behavior.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#00D4AA] mt-1">•</span>
-                  <span>
-                    SNI certification is a design target, not a completed status. We will pursue certification
-                    before any commercial launch.
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#00D4AA] mt-1">•</span>
-                  <span>
-                    Price estimates are for market validation only. Final pricing depends on manufacturing
-                    costs, component sourcing, and certification requirements.
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

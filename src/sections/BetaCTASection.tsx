@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FlaskConical, Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveWaitlistSignup } from "@/lib/airshieldDb";
 
@@ -76,6 +77,7 @@ export default function BetaCTASection() {
       setSubmitted(true);
     } catch (err) {
       console.error("Beta submit failed:", err);
+      toast.error("Couldn't save — please try again.");
     } finally {
       setSaving(false);
     }
@@ -96,8 +98,7 @@ export default function BetaCTASection() {
             HELP DECIDE IF AIRSHIELD GETS BUILT.
           </h2>
           <p className="text-[#8A8A93] max-w-2xl mx-auto leading-relaxed">
-            We are validating demand before prototype production. Join the early list if you want to test,
-            reserve, or simply follow the build.
+            Join the early-access list to test, reserve, or simply follow the build.
           </p>
         </div>
 
@@ -111,7 +112,7 @@ export default function BetaCTASection() {
                 YOU'RE ON THE EARLY LIST.
               </p>
               <p className="text-[#8A8A93]">
-                We'll use your answers to decide prototype priorities, pricing, and launch city.
+                We'll use your answers to shape priorities, pricing, and launch city.
               </p>
             </div>
           </div>

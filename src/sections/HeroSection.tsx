@@ -3,6 +3,7 @@ import { Shield, Wind, Zap, ArrowRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveEarlyAccessReservation } from "@/lib/airshieldDb";
 
@@ -55,6 +56,7 @@ export default function HeroSection() {
       }, 3000);
     } catch (err) {
       console.error("Reservation failed:", err);
+      toast.error("Couldn't save — please try again.");
     } finally {
       setSaving(false);
     }
@@ -74,7 +76,7 @@ export default function HeroSection() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10">
               <span className="w-2 h-2 rounded-full bg-[#00D4AA] animate-pulse" />
               <span className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-wider">
-                Prototype Concept · Indonesia Validation
+                Built for Indonesia's riders
               </span>
             </div>
 
@@ -87,7 +89,7 @@ export default function HeroSection() {
               </h1>
               <p className="text-lg text-[#8A8A93] max-w-xl leading-relaxed">
                 Every day, Indonesian riders sit inches from exhaust, dust, and PM2.5.
-                AirShield is a premium filtration helmet concept built for people who breathe traffic daily.
+                AirShield is a premium filtration helmet built for people who breathe traffic daily.
               </p>
             </div>
 
@@ -122,13 +124,13 @@ export default function HeroSection() {
 
             {/* Microcopy */}
             <p className="text-sm text-[#8A8A93]">
-              No payment. No spam. We'll contact early supporters when prototype testing and beta access open.
+              No spam. We'll contact early supporters first when access opens.
             </p>
 
-            {/* Validation framing */}
+            {/* Launch framing */}
             <div className="pt-4 border-t border-[#1A1A22]">
               <p className="text-sm text-[#8A8A93]">
-                We are testing demand in <span className="text-[#F4F1EC] font-medium">Jakarta, Bali, and major Java cities</span> before moving into prototype production.
+                Launching first in <span className="text-[#F4F1EC] font-medium">Jakarta, Bali, and major Java cities</span>.
               </p>
             </div>
           </div>
@@ -141,7 +143,7 @@ export default function HeroSection() {
               {/* Helmet image */}
               <img
                 src="/hero-helmet.jpg"
-                alt="AirShield Concept Helmet - Full-face motorcycle helmet with integrated air filtration"
+                alt="AirShield Helmet - Full-face motorcycle helmet with integrated air filtration"
                 className="relative z-10 w-full max-w-md lg:max-w-lg rounded-2xl shadow-2xl shadow-[#00D4AA]/10"
               />
               {/* Floating feature badges */}
@@ -183,13 +185,13 @@ export default function HeroSection() {
               </div>
               <p className="text-lg font-medium text-[#00D4AA]">You're on the list!</p>
               <p className="text-sm text-[#8A8A93]">
-                We'll contact you when prototype testing opens in your area.
+                We'll be in touch as soon as access opens in your area.
               </p>
             </div>
           ) : (
             <div className="space-y-4 pt-4">
               <p className="text-sm text-[#8A8A93]">
-                Enter your details to reserve early access. No payment required.
+                Enter your details to reserve early access.
               </p>
               <Input
                 placeholder="Email address *"

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Calculator, Clock, MapPin, Bike, AlertTriangle, ArrowRight, Check, Wind } from "lucide-react";
+import { Calculator, Clock, MapPin, Bike, ArrowRight, Check, Wind } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
@@ -55,6 +56,10 @@ export default function ExposureCalculator() {
 
   const vsWHO = (pm25Level / whoGuideline).toFixed(1);
 
+  // AQLI rule of thumb: ~0.098 years of life expectancy lost per 1 µg/m³ of
+  // sustained PM2.5 above the WHO guideline (5 µg/m³).
+  const lifeYearsLost = Math.max(0, (pm25Level - whoGuideline) * 0.098);
+
   const handleCalculate = () => {
     trackEvent("exposure_calculator_started", { city, trafficLevel, helmetType });
     setShowResults(true);
@@ -96,6 +101,7 @@ export default function ExposureCalculator() {
       setSubmitted(true);
     } catch (err) {
       console.error("Submit failed:", err);
+      toast.error("Couldn't save — please try again.");
     } finally {
       setSaving(false);
     }
@@ -116,8 +122,8 @@ export default function ExposureCalculator() {
             HOW MUCH TRAFFIC AIR DO YOU BREATHE EVERY WEEK?
           </h2>
           <p className="text-[#8A8A93] max-w-2xl mx-auto">
-            Estimate your weekly exposure time based on your commute patterns. This is a population-level
-            estimate, not a personal medical prediction.
+            See how many hours you spend breathing traffic air every week — and what that air is
+            doing to your lifespan.
           </p>
         </div>
 
@@ -262,6 +268,28 @@ export default function ExposureCalculator() {
                 YOUR EXPOSURE ESTIMATE
               </h3>
 
+              {/* Headline stat: years of life lost to the city's air (AQLI) */}
+              <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-[#FF4D1C]/15 to-[#0D0D10] border border-[#FF4D1C]/30 space-y-2">
+                <p className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-wider">
+                  Estimated life expectancy lost to {city || "your city"}'s air
+                </p>
+                <p className="font-heading text-6xl sm:text-7xl text-[#FF4D1C] leading-none">
+                  ≈ {lifeYearsLost.toFixed(1)} years
+                </p>
+                <p className="text-sm text-[#8A8A93] max-w-md mx-auto">
+                  At a sustained PM2.5 of {pm25Level} µg/m³ — {vsWHO}× the WHO guideline of{" "}
+                  {whoGuideline} µg/m³ — that's how much shorter the air alone could make your life.
+                </p>
+                <a
+                  href="https://aqli.epic.uchicago.edu/methodology/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-xs text-[#3A7CA5] hover:text-[#00D4AA] transition-colors"
+                >
+                  Source: Air Quality Life Index (AQLI), University of Chicago →
+                </a>
+              </div>
+
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="text-center p-4 rounded-xl bg-[#13131A] border border-[#1A1A22]">
                   <p className="font-mono-label text-3xl font-bold text-[#00D4AA]">{weeklyHours}h</p>
@@ -303,7 +331,7 @@ export default function ExposureCalculator() {
             <div className="bg-[#0D0D10] rounded-2xl border border-[#1A1A22] p-6 lg:p-8 space-y-6">
               <div className="text-center space-y-2">
                 <h4 className="font-heading text-xl tracking-wide">
-                  WANT TO KNOW WHEN WE TEST THE FIRST AIRSHIELD PROTOTYPE IN YOUR CITY?
+                  WANT TO KNOW WHEN AIRSHIELD LAUNCHES IN YOUR CITY?
                 </h4>
                 <p className="text-sm text-[#8A8A93]">
                   Join the beta list and we'll contact you when testing opens.
@@ -336,17 +364,6 @@ export default function ExposureCalculator() {
                   </Button>
                 </div>
               )}
-            </div>
-
-            {/* Disclaimer */}
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-[#13131A] border border-[#1A1A22]">
-              <AlertTriangle className="w-5 h-5 text-[#F5C842] flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-[#8A8A93] leading-relaxed">
-                <strong className="text-[#F5C842]">Disclaimer:</strong> This is a population-level estimate
-                based on public PM2.5 research and time spent riding. It is not a personal medical prediction.
-                Real exposure depends on route, congestion, weather, speed, helmet fit, and behavior.
-                Long-term health impact estimates are based on AQLI-style population research, not individual diagnosis.
-              </p>
             </div>
           </div>
         )}
