@@ -84,7 +84,7 @@ export default function BetaCTASection() {
   };
 
   return (
-    <section id="beta" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="beta" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">

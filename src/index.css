@@ -41,6 +41,23 @@
 
   html {
     scroll-behavior: smooth;
+    /* keep anchored/snapped sections clear of the fixed nav */
+    scroll-padding-top: 5rem;
+  }
+
+  /* Gently settle on each section's top. Proximity (never mandatory) so tall
+     sections and forms never trap the user. Disabled under reduced-motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-snap-type: y proximity;
+    }
+    section {
+      scroll-snap-align: start;
+    }
+  }
+
+  section {
+    scroll-margin-top: 5rem;
   }
 
   body {

@@ -1,4 +1,5 @@
 import { Wind, AlertTriangle, Shield, VenetianMask, XCircle } from "lucide-react";
+import { StaggerContainer, StaggerItem } from "@/components/motion";
 
 const problemCards = [
   {
@@ -43,7 +44,7 @@ const solutionCards = [
 
 export default function ProblemSection() {
   return (
-    <section id="problem" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="problem" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-16">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -66,11 +67,12 @@ export default function ProblemSection() {
         </div>
 
         {/* Problem cards */}
-        <div className="grid sm:grid-cols-2 gap-6">
+        <StaggerContainer className="grid sm:grid-cols-2 gap-6">
           {problemCards.map((card) => (
-            <div
+            <StaggerItem
               key={card.title}
-              className="p-6 rounded-2xl bg-[#0D0D10] border border-[#1A1A22] hover:border-[#FF4D1C]/30 transition-all group"
+              whileHover={{ y: -4 }}
+              className="p-6 rounded-2xl bg-[#0D0D10] border border-[#1A1A22] transition-[border-color,box-shadow] duration-300 hover:border-[#FF4D1C]/40 hover:shadow-[0_0_40px_-12px_rgba(255,77,28,0.35)]"
             >
               <div className="flex items-start gap-4">
                 <div
@@ -84,9 +86,9 @@ export default function ProblemSection() {
                   <p className="text-sm text-[#8A8A93] leading-relaxed">{card.description}</p>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* Arrow divider */}
         <div className="flex items-center justify-center gap-4">

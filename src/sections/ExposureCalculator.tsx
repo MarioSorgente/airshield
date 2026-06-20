@@ -3,6 +3,7 @@ import { Calculator, Clock, MapPin, Bike, ArrowRight, Check, Wind } from "lucide
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import CountUp from "@/components/CountUp";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveExposureCalculation } from "@/lib/airshieldDb";
 
@@ -108,7 +109,7 @@ export default function ExposureCalculator() {
   };
 
   return (
-    <section id="exposure-calculator" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="exposure-calculator" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -274,7 +275,7 @@ export default function ExposureCalculator() {
                   Estimated life expectancy lost to {city || "your city"}'s air
                 </p>
                 <p className="font-heading text-6xl sm:text-7xl text-[#FF4D1C] leading-none">
-                  ≈ {lifeYearsLost.toFixed(1)} years
+                  ≈ <CountUp value={lifeYearsLost} decimals={1} /> years
                 </p>
                 <p className="text-sm text-[#8A8A93] max-w-md mx-auto">
                   At a sustained PM2.5 of {pm25Level} µg/m³ — {vsWHO}× the WHO guideline of{" "}
@@ -292,15 +293,21 @@ export default function ExposureCalculator() {
 
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="text-center p-4 rounded-xl bg-[#13131A] border border-[#1A1A22]">
-                  <p className="font-mono-label text-3xl font-bold text-[#00D4AA]">{weeklyHours}h</p>
+                  <p className="font-mono-label text-3xl font-bold text-[#00D4AA]">
+                    <CountUp value={parseFloat(weeklyHours)} decimals={1} suffix="h" />
+                  </p>
                   <p className="text-xs text-[#8A8A93] mt-1">Weekly hours in traffic air</p>
                 </div>
                 <div className="text-center p-4 rounded-xl bg-[#13131A] border border-[#1A1A22]">
-                  <p className="font-mono-label text-3xl font-bold text-[#F5C842]">{yearlyHours}h</p>
+                  <p className="font-mono-label text-3xl font-bold text-[#F5C842]">
+                    <CountUp value={parseFloat(yearlyHours)} suffix="h" />
+                  </p>
                   <p className="text-xs text-[#8A8A93] mt-1">Yearly hours in traffic air</p>
                 </div>
                 <div className="text-center p-4 rounded-xl bg-[#13131A] border border-[#1A1A22]">
-                  <p className="font-mono-label text-3xl font-bold text-[#FF4D1C]">{effectiveExposure}h</p>
+                  <p className="font-mono-label text-3xl font-bold text-[#FF4D1C]">
+                    <CountUp value={parseFloat(effectiveExposure)} decimals={1} suffix="h" />
+                  </p>
                   <p className="text-xs text-[#8A8A93] mt-1">Effective weekly exposure</p>
                 </div>
               </div>
