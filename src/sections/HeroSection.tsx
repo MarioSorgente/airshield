@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useTransform, type Variants } from "framer-motion";
 import { Shield, Wind, Zap, ArrowRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { fadeUp } from "@/components/motion";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveEarlyAccessReservation } from "@/lib/airshieldDb";
+
+const heroContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
+};
 
 export default function HeroSection() {
   const [showModal, setShowModal] = useState(false);
@@ -14,6 +21,15 @@ export default function HeroSection() {
   const [city, setCity] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const heroRef = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const imgY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -63,7 +79,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
+    <section ref={heroRef} id="hero" className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#060608] via-[#0D0D10] to-[#13131A]" />
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#00D4AA]/5 to-transparent" />
@@ -71,17 +87,22 @@ export default function HeroSection() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left: Content */}
-          <div className="space-y-8">
+          <motion.div
+            className="space-y-8"
+            variants={reduce ? undefined : heroContainer}
+            initial={reduce ? false : "hidden"}
+            animate={reduce ? undefined : "show"}
+          >
             {/* Status badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10">
+            <motion.div variants={reduce ? undefined : fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10">
               <span className="w-2 h-2 rounded-full bg-[#00D4AA] animate-pulse" />
               <span className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-wider">
                 Built for Indonesia's riders
               </span>
-            </div>
+            </motion.div>
 
             {/* Headline */}
-            <div className="space-y-4">
+            <motion.div variants={reduce ? undefined : fadeUp} className="space-y-4">
               <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl leading-[0.95] tracking-tight">
                 YOUR HELMET PROTECTS YOUR SKULL.
                 <br />
@@ -91,10 +112,10 @@ export default function HeroSection() {
                 Every day, Indonesian riders sit inches from exhaust, dust, and PM2.5.
                 AirShield is a premium filtration helmet built for people who breathe traffic daily.
               </p>
-            </div>
+            </motion.div>
 
             {/* Price anchor */}
-            <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#13131A] border border-[#1A1A22] w-fit">
+            <motion.div variants={reduce ? undefined : fadeUp} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#13131A] border border-[#1A1A22] w-fit">
               <Info className="w-5 h-5 text-[#F5C842]" />
               <div>
                 <p className="text-sm text-[#8A8A93]">Target launch price</p>
@@ -102,10 +123,10 @@ export default function HeroSection() {
                   Rp 3.2M <span className="text-sm font-normal text-[#8A8A93]">/ approx. $200</span>
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <motion.div variants={reduce ? undefined : fadeUp} className="flex flex-col sm:flex-row gap-4">
               <Button
                 onClick={handleReserve}
                 className="bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold px-8 py-6 text-base rounded-lg transition-all hover:scale-105"
@@ -120,30 +141,36 @@ export default function HeroSection() {
               >
                 Calculate my exposure
               </Button>
-            </div>
+            </motion.div>
 
             {/* Microcopy */}
-            <p className="text-sm text-[#8A8A93]">
+            <motion.p variants={reduce ? undefined : fadeUp} className="text-sm text-[#8A8A93]">
               No spam. We'll contact early supporters first when access opens.
-            </p>
+            </motion.p>
 
             {/* Launch framing */}
-            <div className="pt-4 border-t border-[#1A1A22]">
+            <motion.div variants={reduce ? undefined : fadeUp} className="pt-4 border-t border-[#1A1A22]">
               <p className="text-sm text-[#8A8A93]">
                 Launching first in <span className="text-[#F4F1EC] font-medium">Jakarta, Bali, and major Java cities</span>.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right: Product image */}
-          <div className="relative flex justify-center lg:justify-end">
+          <motion.div
+            className="relative flex justify-center lg:justify-end"
+            initial={reduce ? false : { opacity: 0, scale: 0.92 }}
+            animate={reduce ? undefined : { opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          >
             <div className="relative">
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-[#00D4AA]/20 rounded-full blur-[100px] scale-75" />
+              <div className="absolute inset-0 bg-[#00D4AA]/20 rounded-full blur-[100px] scale-75 animate-pulse" />
               {/* Helmet image */}
-              <img
+              <motion.img
                 src="/hero-helmet.jpg"
                 alt="AirShield Helmet - Full-face motorcycle helmet with integrated air filtration"
+                style={reduce ? undefined : { y: imgY, scale: imgScale }}
                 className="relative z-10 w-full max-w-md lg:max-w-lg rounded-2xl shadow-2xl shadow-[#00D4AA]/10"
               />
               {/* Floating feature badges */}
@@ -166,7 +193,7 @@ export default function HeroSection() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 

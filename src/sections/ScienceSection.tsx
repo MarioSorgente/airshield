@@ -1,4 +1,5 @@
 import { BookOpen, ExternalLink } from "lucide-react";
+import { StaggerContainer, StaggerItem } from "@/components/motion";
 
 const sources = [
   {
@@ -61,7 +62,7 @@ const sources = [
 
 export default function ScienceSection() {
   return (
-    <section id="science" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="science" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -80,11 +81,12 @@ export default function ScienceSection() {
         </div>
 
         {/* Source cards */}
-        <div className="grid sm:grid-cols-2 gap-4">
+        <StaggerContainer className="grid sm:grid-cols-2 gap-4">
           {sources.map((source) => (
-            <div
+            <StaggerItem
               key={source.title}
-              className="p-5 rounded-xl bg-[#0D0D10] border border-[#1A1A22] hover:border-[#3A7CA5]/30 transition-all space-y-3"
+              whileHover={{ y: -4 }}
+              className="p-5 rounded-xl bg-[#0D0D10] border border-[#1A1A22] transition-[border-color,box-shadow] duration-300 hover:border-[#3A7CA5]/50 hover:shadow-[0_0_40px_-12px_rgba(58,124,165,0.35)] space-y-3"
             >
               <div className="flex items-start justify-between gap-3">
                 <h3 className="font-semibold text-sm">{source.title}</h3>
@@ -101,9 +103,9 @@ export default function ScienceSection() {
               </div>
               <p className="text-sm text-[#8A8A93] leading-relaxed">{source.description}</p>
               <p className="text-xs text-[#8A8A93]/60 font-mono-label">Source: {source.source}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
       </div>
     </section>

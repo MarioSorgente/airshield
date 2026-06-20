@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import { Toaster } from "sonner";
 import Reveal from "./components/Reveal";
+import NavBar from "./components/NavBar";
+import ScrollProgress from "./components/ScrollProgress";
+import SectionDots from "./components/SectionDots";
 import FirebaseConfigNotice from "./components/FirebaseConfigNotice";
 import HeroSection from "./sections/HeroSection";
 import ProductCardSection from "./sections/ProductCardSection";
@@ -23,6 +26,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#060608] text-[#F4F1EC] font-body overflow-x-hidden">
+      <ScrollProgress />
+      <NavBar />
+      <SectionDots />
       <Reveal><HeroSection /></Reveal>
       <Reveal><ProductCardSection /></Reveal>
       <Reveal><UseCaseSection /></Reveal>
@@ -34,7 +40,9 @@ export default function App() {
       <Reveal><BetaCTASection /></Reveal>
       <Reveal><ScienceSection /></Reveal>
       <FooterSection />
-      <StickyCTA />
+      <div className="lg:hidden">
+        <StickyCTA />
+      </div>
       <Toaster theme="dark" position="top-center" richColors />
       <FirebaseConfigNotice />
     </div>

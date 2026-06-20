@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveUseCaseSelection } from "@/lib/airshieldDb";
+import { StaggerContainer, StaggerItem } from "@/components/motion";
 
 const useCases = [
   {
@@ -81,7 +82,7 @@ export default function UseCaseSection() {
   };
 
   return (
-    <section id="use-cases" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="use-cases" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -97,16 +98,17 @@ export default function UseCaseSection() {
         </div>
 
         {/* Use case cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {useCases.map((uc) => (
-            <div
+            <StaggerItem
               key={uc.id}
-              className={`p-6 rounded-2xl border transition-all hover:scale-[1.02] cursor-pointer ${
+              whileHover={{ y: -4 }}
+              onClick={() => handleSelect(uc.id)}
+              className={`p-6 rounded-2xl border cursor-pointer transition-[border-color,box-shadow] duration-300 ${
                 selectedCase === uc.id
                   ? "border-[#00D4AA] bg-[#00D4AA]/10"
-                  : "border-[#1A1A22] bg-[#0D0D10] hover:border-[#8A8A93]/50"
+                  : "border-[#1A1A22] bg-[#0D0D10] hover:border-[#00D4AA]/40 hover:shadow-[0_0_40px_-12px_rgba(0,212,170,0.35)]"
               }`}
-              onClick={() => handleSelect(uc.id)}
             >
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-[#00D4AA]/10 flex items-center justify-center">
@@ -126,9 +128,9 @@ export default function UseCaseSection() {
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
 
       {/* Capture Modal */}

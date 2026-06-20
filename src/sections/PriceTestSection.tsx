@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { savePriceResponse } from "@/lib/airshieldDb";
+import { StaggerContainer, StaggerItem } from "@/components/motion";
 
 const priceOptions = [
   {
@@ -110,7 +111,7 @@ export default function PriceTestSection() {
   };
 
   return (
-    <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="pricing" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -126,14 +127,15 @@ export default function PriceTestSection() {
         </div>
 
         {/* Price cards */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <StaggerContainer className="grid md:grid-cols-3 gap-6">
           {priceOptions.map((option) => (
-            <div
+            <StaggerItem
               key={option.id}
-              className={`relative rounded-2xl border p-6 space-y-6 transition-all hover:scale-[1.02] ${
+              whileHover={{ y: -6 }}
+              className={`relative rounded-2xl border p-6 space-y-6 transition-[border-color,box-shadow] duration-300 ${
                 option.highlight
-                  ? "border-[#00D4AA] bg-gradient-to-b from-[#00D4AA]/10 to-[#0D0D10]"
-                  : "border-[#1A1A22] bg-[#0D0D10]"
+                  ? "border-[#00D4AA] bg-gradient-to-b from-[#00D4AA]/10 to-[#0D0D10] shadow-[0_0_50px_-15px_rgba(0,212,170,0.4)]"
+                  : "border-[#1A1A22] bg-[#0D0D10] hover:border-[#00D4AA]/40 hover:shadow-[0_0_40px_-12px_rgba(0,212,170,0.3)]"
               }`}
             >
               {option.highlight && (
@@ -171,9 +173,9 @@ export default function PriceTestSection() {
                 {option.cta}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
 
       {/* Capture Modal */}
