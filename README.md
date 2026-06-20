@@ -105,6 +105,21 @@ firebase deploy --only firestore:rules
 3. Add the six `VITE_FIREBASE_*` environment variables under **Settings → Environment Variables** (Production + Preview).
 4. Deploy. [`vercel.json`](vercel.json) provides the SPA fallback so all routes serve `index.html`.
 
+### Verify your Vercel env vars are working
+
+`VITE_*` variables are **inlined into the bundle at build time**, not read at runtime. The most common deployment mistake is adding/changing them but not rebuilding — so the live site still has the old (or empty) config and every Firestore write silently fails. Checklist:
+
+1. **Names match exactly** — all six `VITE_FIREBASE_*` keys, no typos, no quotes around values.
+2. **Set for the right Environments** — Production **and** Preview.
+3. **Redeploy after any change** — env var edits don't take effect until the next build (in Vercel: Deployments → ⋯ → Redeploy).
+4. **Firestore rules deployed** — run `firebase deploy --only firestore:rules` (without this, even correct keys get permission-denied on write).
+
+The app self-tests this for you:
+- If any `VITE_FIREBASE_*` is missing at build time, a **"Firebase not configured"** chip appears at the bottom-left of the live site and the browser console logs exactly which vars are missing.
+- If config is present but a write fails (wrong project, rules not deployed, offline), submitting any form shows an error toast instead of the success state.
+
+So a clean end-to-end test is: open the deployed site → no red chip → submit a form → you see the success state → the document appears in Firestore → Data.
+
 ---
 
 ## Project structure

@@ -89,7 +89,7 @@ export default function FilterSubscriptionSection() {
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10">
             <Filter className="w-4 h-4 text-[#00D4AA]" />
             <span className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-wider">
-              Subscription Validation
+              Subscription Plans
             </span>
           </div>
           <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">

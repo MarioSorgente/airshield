@@ -3,6 +3,7 @@ import { Check, ArrowRight, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { savePriceResponse } from "@/lib/airshieldDb";
 
@@ -102,6 +103,7 @@ export default function PriceTestSection() {
       }, 3000);
     } catch (err) {
       console.error("Price submit failed:", err);
+      toast.error("Couldn't save — please try again.");
     } finally {
       setSaving(false);
     }
@@ -113,13 +115,13 @@ export default function PriceTestSection() {
         {/* Header */}
         <div className="text-center space-y-4">
           <p className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-widest">
-            Market Research
+            Pricing
           </p>
           <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">
             WHAT WOULD YOU PAY TO BREATHE CLEANER AIR ON EVERY RIDE?
           </h2>
           <p className="text-[#8A8A93] max-w-2xl mx-auto">
-            These are research options to help us understand what riders value. No payment is collected.
+            Which AirShield fits you? Pick the option that feels right.
           </p>
         </div>
 
@@ -171,14 +173,6 @@ export default function PriceTestSection() {
               </Button>
             </div>
           ))}
-        </div>
-
-        {/* Disclaimer */}
-        <div className="text-center p-4 rounded-lg bg-[#13131A] border border-[#1A1A22]">
-          <p className="text-sm text-[#8A8A93]">
-            These prices are for validation purposes only. Final pricing will depend on manufacturing costs,
-            certification requirements, and component sourcing. No payment is collected today.
-          </p>
         </div>
       </div>
 

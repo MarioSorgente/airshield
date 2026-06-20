@@ -34,7 +34,7 @@ const problemCards = [
 const solutionCards = [
   {
     icon: Shield,
-    title: "AirShield = Integrated filtered airflow concept",
+    title: "AirShield = Integrated filtered airflow",
     description:
       "A full-face helmet with built-in H13 HEPA filtration, positive pressure airflow, and active ventilation designed for Indonesia's climate.",
     color: "#00D4AA",
@@ -92,7 +92,7 @@ export default function ProblemSection() {
         <div className="flex items-center justify-center gap-4">
           <div className="h-px w-24 bg-gradient-to-r from-transparent to-[#8A8A93]/30" />
           <span className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-widest">
-            The Concept Solution
+            The Solution
           </span>
           <div className="h-px w-24 bg-gradient-to-l from-transparent to-[#00D4AA]/30" />
         </div>
@@ -118,22 +118,6 @@ export default function ProblemSection() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Conservative claim disclaimer */}
-        <div className="max-w-3xl mx-auto p-6 rounded-xl bg-[#13131A] border border-[#1A1A22]">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-[#F5C842] flex-shrink-0 mt-0.5" />
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-[#F5C842]">Transparent about our claims</p>
-              <p className="text-sm text-[#8A8A93] leading-relaxed">
-                H13 HEPA media is rated highly in lab conditions, but real-world helmet performance
-                depends on seal, airflow, fit, maintenance, and testing. Filtration performance is to be
-                validated through prototype testing. AirShield is designed for SNI certification.
-                We do not claim proven health outcomes — we claim a concept worth building and testing.
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>

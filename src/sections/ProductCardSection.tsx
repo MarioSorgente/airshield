@@ -3,6 +3,7 @@ import { Package, Fan, Filter, Battery, Bell, ArrowRight, Check, MessageCircle }
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveEarlyAccessReservation, saveVariantSelection } from "@/lib/airshieldDb";
 
@@ -86,6 +87,7 @@ export default function ProductCardSection() {
       }, 3000);
     } catch (err) {
       console.error("Submit failed:", err);
+      toast.error("Couldn't save — please try again.");
     } finally {
       setSaving(false);
     }
@@ -98,9 +100,9 @@ export default function ProductCardSection() {
           {/* Status bar */}
           <div className="px-6 py-3 bg-[#13131A] border-b border-[#1A1A22] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#F5C842]" />
-              <span className="font-mono-label text-xs text-[#F5C842] uppercase tracking-wider">
-                Concept Product — Not Yet Available
+              <span className="w-2 h-2 rounded-full bg-[#00D4AA]" />
+              <span className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-wider">
+                AirShield One · H13 HEPA Filtration
               </span>
             </div>
             <span className="text-xs text-[#8A8A93]">AirShield One</span>
@@ -116,7 +118,7 @@ export default function ProductCardSection() {
                   className="w-3/4 h-3/4 object-contain"
                 />
                 <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-[#00D4AA]/20 border border-[#00D4AA]/30">
-                  <span className="text-xs font-medium text-[#00D4AA]">Prototype Concept</span>
+                  <span className="text-xs font-medium text-[#00D4AA]">H13 HEPA</span>
                 </div>
               </div>
 
@@ -152,7 +154,7 @@ export default function ProductCardSection() {
               <div>
                 <h2 className="font-heading text-3xl tracking-wide">AIRSHIELD ONE</h2>
                 <p className="text-sm text-[#8A8A93] mt-1">
-                  Premium full-face filtration helmet concept
+                  Premium full-face filtration helmet
                 </p>
               </div>
 
@@ -198,7 +200,7 @@ export default function ProductCardSection() {
               </div>
 
               <p className="text-xs text-center text-[#8A8A93]">
-                No payment today. This helps us decide production volume, pricing, and beta location.
+                Reserve now to secure your place on the early-access list.
               </p>
             </div>
           </div>
@@ -220,13 +222,13 @@ export default function ProductCardSection() {
               </div>
               <p className="text-lg font-medium text-[#00D4AA]">You're on the list!</p>
               <p className="text-sm text-[#8A8A93]">
-                We'll contact you when prototype testing opens.
+                We'll be in touch soon.
               </p>
             </div>
           ) : (
             <div className="space-y-4 pt-4">
               <p className="text-sm text-[#8A8A93]">
-                Reserve your spot for the {selectedVariant} AirShield One. No payment required.
+                Reserve your spot for the {selectedVariant} AirShield One.
               </p>
               <Input
                 placeholder="Email address *"

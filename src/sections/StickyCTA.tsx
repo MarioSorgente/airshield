@@ -33,8 +33,8 @@ export default function StickyCTA() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="hidden sm:block">
-              <p className="text-xs text-[#8A8A93]">Prototype concept</p>
-              <p className="text-sm font-medium">Reserve early access — no payment</p>
+              <p className="text-xs text-[#8A8A93]">AirShield One</p>
+              <p className="text-sm font-medium">Reserve early access</p>
             </div>
             <p className="sm:hidden text-sm font-medium">Reserve early access</p>
           </div>

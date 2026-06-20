@@ -1,13 +1,15 @@
 import { useEffect } from "react";
+import { Toaster } from "sonner";
+import Reveal from "./components/Reveal";
+import FirebaseConfigNotice from "./components/FirebaseConfigNotice";
 import HeroSection from "./sections/HeroSection";
 import ProductCardSection from "./sections/ProductCardSection";
+import UseCaseSection from "./sections/UseCaseSection";
 import PriceTestSection from "./sections/PriceTestSection";
 import ProblemSection from "./sections/ProblemSection";
 import ExposureCalculator from "./sections/ExposureCalculator";
 import FilterSubscriptionSection from "./sections/FilterSubscriptionSection";
-import UseCaseSection from "./sections/UseCaseSection";
 import ObjectionCaptureSection from "./sections/ObjectionCaptureSection";
-import CommunityValidationSection from "./sections/CommunityValidationSection";
 import BetaCTASection from "./sections/BetaCTASection";
 import ScienceSection from "./sections/ScienceSection";
 import FooterSection from "./sections/FooterSection";
@@ -21,19 +23,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#060608] text-[#F4F1EC] font-body overflow-x-hidden">
-      <HeroSection />
-      <ProductCardSection />
-      <PriceTestSection />
-      <ProblemSection />
-      <ExposureCalculator />
-      <FilterSubscriptionSection />
-      <UseCaseSection />
-      <ObjectionCaptureSection />
-      <CommunityValidationSection />
-      <BetaCTASection />
-      <ScienceSection />
+      <Reveal><HeroSection /></Reveal>
+      <Reveal><ProductCardSection /></Reveal>
+      <Reveal><UseCaseSection /></Reveal>
+      <Reveal><PriceTestSection /></Reveal>
+      <Reveal><ProblemSection /></Reveal>
+      <Reveal><ExposureCalculator /></Reveal>
+      <Reveal><FilterSubscriptionSection /></Reveal>
+      <Reveal><ObjectionCaptureSection /></Reveal>
+      <Reveal><BetaCTASection /></Reveal>
+      <Reveal><ScienceSection /></Reveal>
       <FooterSection />
       <StickyCTA />
+      <Toaster theme="dark" position="top-center" richColors />
+      <FirebaseConfigNotice />
     </div>
   );
 }
