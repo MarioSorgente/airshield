@@ -17,7 +17,10 @@ type TrackingEvent =
   | "preorder_notify_click"
   | "scroll_to_section"
   | "modal_opened"
-  | "modal_closed";
+  | "modal_closed"
+  | "preset_view_selected"
+  | "filter_explore_opened"
+  | "view_reset";
 
 interface TrackingPayload {
   event: TrackingEvent;

@@ -1,0 +1,38 @@
+{
+  "product": "AirShield One",
+  "model": {
+    "path": "/product-visualizer/model/airshield-one.glb",
+    "available": false,
+    "meshes": {
+      "shell": "helmet_shell",
+      "visor": "visor",
+      "filterHousing": "filter_housing",
+      "filterCartridge": "filter_cartridge",
+      "fanModule": "fan_module"
+    }
+  },
+  "fallback": {
+    "front": "/product-visualizer/photos/helmet-front.webp",
+    "left": "/product-visualizer/photos/helmet-left.webp",
+    "right": "/product-visualizer/photos/helmet-right.webp",
+    "back": "/product-visualizer/photos/helmet-back.webp",
+    "filterCloseup": "/product-visualizer/photos/helmet-filter-closeup.webp",
+    "default": "/product-visualizer/photos/helmet-fallback-cc0.jpg",
+    "illustrative": true
+  },
+  "colors": [
+    { "name": "Matte Black", "hex": "#1a1a1a", "finish": "matte" },
+    { "name": "White / Grey", "hex": "#d4d4d4", "finish": "satin" },
+    { "name": "High-visibility", "hex": "#F5C842", "finish": "gloss" },
+    { "name": "Minimal Premium", "hex": "#2a2a2a", "finish": "satin" },
+    { "name": "Sport Style", "hex": "#FF4D1C", "finish": "gloss" }
+  ],
+  "filterExplode": {
+    "available": true,
+    "labels": [
+      { "id": "cartridge", "text": "Replaceable filter cartridge" },
+      { "id": "intake", "text": "Air intake" },
+      { "id": "fan", "text": "Fan-assisted airflow" }
+    ]
+  }
+}
