@@ -139,10 +139,13 @@ export default function ProductVisualizer({
       ref={containerRef}
       className="relative aspect-[4/3] overflow-hidden rounded-xl border border-[#1A1A22] bg-[radial-gradient(120%_120%_at_50%_25%,#1A1A22_0%,#0D0D10_55%,#08080b_100%)] sm:aspect-square"
     >
-      {/* H13 HEPA chip (preserved from the original product card) */}
-      <div className="absolute left-4 top-4 z-30 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/20 px-3 py-1">
-        <span className="text-xs font-medium text-[#00D4AA]">H13 HEPA</span>
-      </div>
+      {/* H13 HEPA chip (preserved from the original product card). Hidden in
+          explore mode so it doesn't overlap the "Filtration system" title. */}
+      {!explore && (
+        <div className="absolute left-4 top-4 z-30 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/20 px-3 py-1">
+          <span className="text-xs font-medium text-[#00D4AA]">H13 HEPA</span>
+        </div>
+      )}
 
       {!webglSupported ? (
         <FallbackProductViewer fallback={activeManifest.fallback} />
