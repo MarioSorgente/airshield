@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { fadeUp } from "@/components/motion";
+import SectionShell from "@/components/SectionShell";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveEarlyAccessReservation } from "@/lib/airshieldDb";
 
@@ -79,7 +80,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section ref={heroRef} id="hero" className="relative min-h-screen flex items-center overflow-hidden">
+    <SectionShell ref={heroRef} id="hero" variant="hero" bare>
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#060608] via-[#0D0D10] to-[#13131A]" />
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#00D4AA]/5 to-transparent" />
@@ -103,7 +104,7 @@ export default function HeroSection() {
 
             {/* Headline */}
             <motion.div variants={reduce ? undefined : fadeUp} className="space-y-4">
-              <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl leading-[0.95] tracking-tight">
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl leading-[0.95] tracking-tight">
                 YOUR HELMET PROTECTS YOUR SKULL.
                 <br />
                 <span className="text-[#00D4AA]">WHAT PROTECTS YOUR LUNGS?</span>
@@ -253,6 +254,6 @@ export default function HeroSection() {
           )}
         </DialogContent>
       </Dialog>
-    </section>
+    </SectionShell>
   );
 }

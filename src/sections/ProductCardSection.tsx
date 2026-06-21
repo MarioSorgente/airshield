@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import SectionShell from "@/components/SectionShell";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveEarlyAccessReservation, saveVariantSelection } from "@/lib/airshieldDb";
 
@@ -94,9 +95,8 @@ export default function ProductCardSection() {
   };
 
   return (
-    <section id="product" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-[#0D0D10] rounded-2xl border border-[#1A1A22] overflow-hidden">
+    <SectionShell id="product" variant="feature" surface="raised" containerClassName="max-w-5xl">
+      <div className="bg-[#0D0D10] rounded-[2rem] border border-[#1A1A22] overflow-hidden">
           {/* Status bar */}
           <div className="px-6 py-3 bg-[#13131A] border-b border-[#1A1A22] flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -205,7 +205,6 @@ export default function ProductCardSection() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Reserve Modal */}
       <Dialog open={showReserveModal} onOpenChange={setShowReserveModal}>
@@ -308,6 +307,6 @@ export default function ProductCardSection() {
           )}
         </DialogContent>
       </Dialog>
-    </section>
+    </SectionShell>
   );
 }

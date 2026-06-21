@@ -3,6 +3,8 @@ import { FlaskConical, Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import SectionShell from "@/components/SectionShell";
+import SectionHeader from "@/components/SectionHeader";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveWaitlistSignup } from "@/lib/airshieldDb";
 
@@ -84,23 +86,13 @@ export default function BetaCTASection() {
   };
 
   return (
-    <section id="beta" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto space-y-12">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10">
-            <FlaskConical className="w-4 h-4 text-[#00D4AA]" />
-            <span className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-wider">
-              Beta Program
-            </span>
-          </div>
-          <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">
-            HELP DECIDE IF AIRSHIELD GETS BUILT.
-          </h2>
-          <p className="text-[#8A8A93] max-w-2xl mx-auto leading-relaxed">
-            Join the early-access list to test, reserve, or simply follow the build.
-          </p>
-        </div>
+    <SectionShell id="beta" variant="feature" glow="teal" containerClassName="max-w-3xl">
+      <SectionHeader
+        icon={FlaskConical}
+        eyebrow="Beta Program"
+        title="HELP DECIDE IF AIRSHIELD GETS BUILT."
+        description="Join the early-access list to test, reserve, or simply follow the build."
+      />
 
         {submitted ? (
           <div className="text-center space-y-6 animate-in fade-in">
@@ -117,7 +109,7 @@ export default function BetaCTASection() {
             </div>
           </div>
         ) : (
-          <div className="bg-[#0D0D10] rounded-2xl border border-[#1A1A22] p-6 lg:p-8 space-y-6">
+          <div className="bg-[#0D0D10] rounded-[2rem] border border-[#1A1A22] p-6 lg:p-8 space-y-6">
             {/* Name */}
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -294,7 +286,6 @@ export default function BetaCTASection() {
             </p>
           </div>
         )}
-      </div>
-    </section>
+    </SectionShell>
   );
 }

@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { savePriceResponse } from "@/lib/airshieldDb";
 import { StaggerContainer, StaggerItem } from "@/components/motion";
+import SectionShell from "@/components/SectionShell";
+import SectionHeader from "@/components/SectionHeader";
 
 const priceOptions = [
   {
@@ -111,22 +113,14 @@ export default function PriceTestSection() {
   };
 
   return (
-    <section id="pricing" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-12">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <p className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-widest">
-            Pricing
-          </p>
-          <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">
-            WHAT WOULD YOU PAY TO BREATHE CLEANER AIR ON EVERY RIDE?
-          </h2>
-          <p className="text-[#8A8A93] max-w-2xl mx-auto">
-            Which AirShield fits you? Pick the option that feels right.
-          </p>
-        </div>
+    <SectionShell id="pricing" variant="interactive" surface="raised" glow="teal">
+      <SectionHeader
+        eyebrow="Pricing"
+        title="WHAT WOULD YOU PAY TO BREATHE CLEANER AIR ON EVERY RIDE?"
+        description="Which AirShield fits you? Pick the option that feels right."
+      />
 
-        {/* Price cards */}
+      {/* Price cards */}
         <StaggerContainer className="grid md:grid-cols-3 gap-6">
           {priceOptions.map((option) => (
             <StaggerItem
@@ -176,7 +170,6 @@ export default function PriceTestSection() {
             </StaggerItem>
           ))}
         </StaggerContainer>
-      </div>
 
       {/* Capture Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
@@ -237,6 +230,6 @@ export default function PriceTestSection() {
           )}
         </DialogContent>
       </Dialog>
-    </section>
+    </SectionShell>
   );
 }
