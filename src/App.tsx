@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
 import Reveal from "./components/Reveal";
 import NavBar from "./components/NavBar";
 import ScrollProgress from "./components/ScrollProgress";
@@ -45,6 +46,7 @@ export default function App() {
       </div>
       <Toaster theme="dark" position="top-center" richColors />
       <FirebaseConfigNotice />
+      <Analytics />
     </div>
   );
 }
