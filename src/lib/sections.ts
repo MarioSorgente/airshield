@@ -5,11 +5,10 @@ export type SectionMeta = { id: string; label: string };
 export const SECTIONS: SectionMeta[] = [
   { id: "hero", label: "Home" },
   { id: "product", label: "Product" },
+  { id: "problem", label: "The problem" },
   { id: "use-cases", label: "Who it's for" },
   { id: "pricing", label: "Pricing" },
-  { id: "problem", label: "The problem" },
   { id: "exposure-calculator", label: "Exposure" },
-  { id: "filter", label: "Filter" },
   { id: "beta", label: "Beta" },
   { id: "science", label: "Science" },
 ];
