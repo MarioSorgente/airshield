@@ -94,7 +94,7 @@ export default function ProductCardSection() {
   };
 
   return (
-    <section id="product" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
+    <section id="product" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-[#0D0D10] rounded-2xl border border-[#1A1A22] overflow-hidden">
           {/* Status bar */}

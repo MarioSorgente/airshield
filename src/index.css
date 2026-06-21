@@ -45,19 +45,41 @@
     scroll-padding-top: 5rem;
   }
 
-  /* Gently settle on each section's top. Proximity (never mandatory) so tall
-     sections and forms never trap the user. Disabled under reduced-motion. */
-  @media (prefers-reduced-motion: no-preference) {
+  /* Section-per-section scrolling. Firm (mandatory) on desktop where each
+     section fills a viewport; left free-flowing on mobile and under
+     reduced-motion so tall stacked content never traps the user. */
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     html {
-      scroll-snap-type: y proximity;
+      scroll-snap-type: y mandatory;
     }
     section {
       scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
   }
 
   section {
     scroll-margin-top: 5rem;
+  }
+
+  /* Drag affordance for the native range sliders (minutes / days, etc.). */
+  input[type="range"] {
+    cursor: grab;
+  }
+  input[type="range"]:active {
+    cursor: grabbing;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    cursor: grab;
+  }
+  input[type="range"]:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+  input[type="range"]::-moz-range-thumb {
+    cursor: grab;
+  }
+  input[type="range"]:active::-moz-range-thumb {
+    cursor: grabbing;
   }
 
   body {

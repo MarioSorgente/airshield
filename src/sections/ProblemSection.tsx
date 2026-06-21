@@ -44,8 +44,8 @@ const solutionCards = [
 
 export default function ProblemSection() {
   return (
-    <section id="problem" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-16">
+    <section id="problem" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-10">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#FF4D1C]/30 bg-[#FF4D1C]/10">

@@ -111,8 +111,8 @@ export default function PriceTestSection() {
   };
 
   return (
-    <section id="pricing" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-12">
+    <section id="pricing" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <p className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-widest">

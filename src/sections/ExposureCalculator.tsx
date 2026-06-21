@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Calculator, Clock, MapPin, Bike, ArrowRight, Check, Wind } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,15 @@ export default function ExposureCalculator() {
   const [showResults, setShowResults] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Jump to the results as soon as they render after "Calculate my exposure".
+  // scroll-padding-top (5rem, set in index.css) keeps them clear of the fixed nav.
+  useEffect(() => {
+    if (showResults) {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showResults]);
 
   const cityData = cities.find((c) => c.name === city);
   const pm25Level = cityData?.pm25 || 40;
@@ -109,8 +118,8 @@ export default function ExposureCalculator() {
   };
 
   return (
-    <section id="exposure-calculator" className="py-24 sm:py-28 lg:py-32 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-12">
+    <section id="exposure-calculator" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10">
@@ -263,7 +272,7 @@ export default function ExposureCalculator() {
 
         {/* Results */}
         {showResults && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div ref={resultsRef} className="snap-start scroll-mt-20 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="bg-gradient-to-br from-[#00D4AA]/10 to-[#0D0D10] rounded-2xl border border-[#00D4AA]/30 p-6 lg:p-8 space-y-6">
               <h3 className="font-heading text-2xl tracking-wide text-center">
                 YOUR EXPOSURE ESTIMATE
