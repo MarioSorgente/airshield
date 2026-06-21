@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import SectionShell from "@/components/SectionShell";
+import ProductVisualizer from "@/components/product-visualizer/ProductVisualizer";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveEarlyAccessReservation, saveVariantSelection } from "@/lib/airshieldDb";
 
@@ -111,16 +112,7 @@ export default function ProductCardSection() {
           <div className="grid md:grid-cols-2 gap-8 p-6 lg:p-8">
             {/* Product visual */}
             <div className="space-y-6">
-              <div className="aspect-square rounded-xl bg-gradient-to-br from-[#13131A] to-[#1A1A22] flex items-center justify-center relative overflow-hidden">
-                <img
-                  src="/hero-helmet.jpg"
-                  alt="AirShield One"
-                  className="w-3/4 h-3/4 object-contain"
-                />
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-[#00D4AA]/20 border border-[#00D4AA]/30">
-                  <span className="text-xs font-medium text-[#00D4AA]">H13 HEPA</span>
-                </div>
-              </div>
+              <ProductVisualizer selectedVariant={selectedVariant} />
 
               {/* Variant selector */}
               <div className="space-y-3">
