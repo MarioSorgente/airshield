@@ -34,16 +34,6 @@ const problemCards = [
   },
 ];
 
-const solutionCards = [
-  {
-    icon: Shield,
-    title: "AirShield = Integrated filtered airflow",
-    description:
-      "A full-face helmet with built-in H13 HEPA filtration, positive pressure airflow, and active ventilation designed for Indonesia's climate.",
-    color: "#00D4AA",
-  },
-];
-
 export default function ProblemSection() {
   return (
     <SectionShell id="problem" variant="feature" glow="orange">
@@ -62,63 +52,29 @@ export default function ProblemSection() {
         description="PM2.5 is fine particulate pollution from traffic, combustion, industry, and burning. It is small enough to travel deep into the respiratory system. For riders, the commute is not only transportation — it is a daily exposure event."
       />
 
-      <div className="space-y-10">
-        {/* Problem cards */}
-        <StaggerContainer className="grid sm:grid-cols-2 gap-6">
-          {problemCards.map((card) => (
-            <StaggerItem
-              key={card.title}
-              whileHover={{ y: -4 }}
-              className="p-6 rounded-2xl bg-[#0D0D10] border border-[#1A1A22] transition-[border-color,box-shadow] duration-300 hover:border-[#FF4D1C]/40 hover:shadow-[0_0_40px_-12px_rgba(255,77,28,0.35)]"
-            >
-              <div className="flex items-start gap-4">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: `${card.color}15` }}
-                >
-                  <card.icon className="w-6 h-6" style={{ color: card.color }} />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">{card.title}</h3>
-                  <p className="text-sm text-[#8A8A93] leading-relaxed">{card.description}</p>
-                </div>
+      {/* Problem cards */}
+      <StaggerContainer className="grid sm:grid-cols-2 gap-6">
+        {problemCards.map((card) => (
+          <StaggerItem
+            key={card.title}
+            whileHover={{ y: -4 }}
+            className="p-6 rounded-2xl bg-[#0D0D10] border border-[#1A1A22] transition-[border-color,box-shadow] duration-300 hover:border-[#FF4D1C]/40 hover:shadow-[0_0_40px_-12px_rgba(255,77,28,0.35)]"
+          >
+            <div className="flex items-start gap-4">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: `${card.color}15` }}
+              >
+                <card.icon className="w-6 h-6" style={{ color: card.color }} />
               </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-
-        {/* Arrow divider */}
-        <div className="flex items-center justify-center gap-4">
-          <div className="h-px w-24 bg-gradient-to-r from-transparent to-[#8A8A93]/30" />
-          <span className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-widest">
-            The Solution
-          </span>
-          <div className="h-px w-24 bg-gradient-to-l from-transparent to-[#00D4AA]/30" />
-        </div>
-
-        {/* Solution card */}
-        <div className="max-w-2xl mx-auto">
-          {solutionCards.map((card) => (
-            <div
-              key={card.title}
-              className="p-8 rounded-2xl bg-gradient-to-br from-[#00D4AA]/10 to-[#0D0D10] border border-[#00D4AA]/30 hover:border-[#00D4AA]/50 transition-all"
-            >
-              <div className="flex items-start gap-4">
-                <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: `${card.color}20` }}
-                >
-                  <card.icon className="w-7 h-7" style={{ color: card.color }} />
-                </div>
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-xl">{card.title}</h3>
-                  <p className="text-[#8A8A93] leading-relaxed">{card.description}</p>
-                </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg">{card.title}</h3>
+                <p className="text-sm text-[#8A8A93] leading-relaxed">{card.description}</p>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </StaggerItem>
+        ))}
+      </StaggerContainer>
     </SectionShell>
   );
 }

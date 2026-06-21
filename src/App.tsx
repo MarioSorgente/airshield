@@ -12,7 +12,6 @@ import UseCaseSection from "./sections/UseCaseSection";
 import PriceTestSection from "./sections/PriceTestSection";
 import ProblemSection from "./sections/ProblemSection";
 import ExposureCalculator from "./sections/ExposureCalculator";
-import FilterSubscriptionSection from "./sections/FilterSubscriptionSection";
 import BetaCTASection from "./sections/BetaCTASection";
 import ScienceSection from "./sections/ScienceSection";
 import FooterSection from "./sections/FooterSection";
@@ -31,11 +30,10 @@ export default function App() {
       <SectionDots />
       <Reveal><HeroSection /></Reveal>
       <Reveal><ProductCardSection /></Reveal>
+      <Reveal><ProblemSection /></Reveal>
       <Reveal><UseCaseSection /></Reveal>
       <Reveal><PriceTestSection /></Reveal>
-      <Reveal><ProblemSection /></Reveal>
       <Reveal><ExposureCalculator /></Reveal>
-      <Reveal><FilterSubscriptionSection /></Reveal>
       <Reveal><BetaCTASection /></Reveal>
       <Reveal><ScienceSection /></Reveal>
       <FooterSection />
