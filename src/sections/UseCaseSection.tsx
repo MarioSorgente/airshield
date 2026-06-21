@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveUseCaseSelection } from "@/lib/airshieldDb";
 import { StaggerContainer, StaggerItem } from "@/components/motion";
+import SectionShell from "@/components/SectionShell";
+import SectionHeader from "@/components/SectionHeader";
 
 const useCases = [
   {
@@ -82,22 +84,14 @@ export default function UseCaseSection() {
   };
 
   return (
-    <section id="use-cases" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <p className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-widest">
-            Segmentation
-          </p>
-          <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">
-            WHO IS AIRSHIELD FOR?
-          </h2>
-          <p className="text-[#8A8A93] max-w-2xl mx-auto">
-            Click the card that best describes you. This helps us understand which riders need AirShield most.
-          </p>
-        </div>
+    <SectionShell id="use-cases" variant="interactive">
+      <SectionHeader
+        eyebrow="Segmentation"
+        title="WHO IS AIRSHIELD FOR?"
+        description="Click the card that best describes you. This helps us understand which riders need AirShield most."
+      />
 
-        {/* Use case cards */}
+      {/* Use case cards */}
         <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {useCases.map((uc) => (
             <StaggerItem
@@ -131,7 +125,6 @@ export default function UseCaseSection() {
             </StaggerItem>
           ))}
         </StaggerContainer>
-      </div>
 
       {/* Capture Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
@@ -183,6 +176,6 @@ export default function UseCaseSection() {
           )}
         </DialogContent>
       </Dialog>
-    </section>
+    </SectionShell>
   );
 }

@@ -45,19 +45,8 @@
     scroll-padding-top: 5rem;
   }
 
-  /* Section-per-section scrolling. Firm (mandatory) on desktop where each
-     section fills a viewport; left free-flowing on mobile and under
-     reduced-motion so tall stacked content never traps the user. */
-  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-snap-type: y mandatory;
-    }
-    section {
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-    }
-  }
-
+  /* Anchor offset so #-links and programmatic scrolls land clear of the fixed
+     nav. No scroll-snapping — the page scrolls as one continuous editorial flow. */
   section {
     scroll-margin-top: 5rem;
   }

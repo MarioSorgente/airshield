@@ -1,5 +1,7 @@
 import { BookOpen, ExternalLink } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/motion";
+import SectionShell from "@/components/SectionShell";
+import SectionHeader from "@/components/SectionHeader";
 
 const sources = [
   {
@@ -62,25 +64,16 @@ const sources = [
 
 export default function ScienceSection() {
   return (
-    <section id="science" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#3A7CA5]/30 bg-[#3A7CA5]/10">
-            <BookOpen className="w-4 h-4 text-[#3A7CA5]" />
-            <span className="font-mono-label text-xs text-[#3A7CA5] uppercase tracking-wider">
-              Sources
-            </span>
-          </div>
-          <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">
-            THE SCIENCE BEHIND THE PROBLEM
-          </h2>
-          <p className="text-[#8A8A93] max-w-3xl mx-auto">
-            These are the sources and methodologies behind the numbers on this page.
-          </p>
-        </div>
+    <SectionShell id="science" variant="compact" surface="raised" glow="blue">
+      <SectionHeader
+        icon={BookOpen}
+        eyebrow="Sources"
+        tone="blue"
+        title="THE SCIENCE BEHIND THE PROBLEM"
+        description="These are the sources and methodologies behind the numbers on this page."
+      />
 
-        {/* Source cards */}
+      {/* Source cards */}
         <StaggerContainer className="grid sm:grid-cols-2 gap-4">
           {sources.map((source) => (
             <StaggerItem
@@ -106,8 +99,6 @@ export default function ScienceSection() {
             </StaggerItem>
           ))}
         </StaggerContainer>
-
-      </div>
-    </section>
+    </SectionShell>
   );
 }

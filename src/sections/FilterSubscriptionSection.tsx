@@ -3,6 +3,8 @@ import { Filter, Calendar, Check, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import SectionShell from "@/components/SectionShell";
+import SectionHeader from "@/components/SectionHeader";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveFilterSubscription } from "@/lib/airshieldDb";
 
@@ -82,27 +84,21 @@ export default function FilterSubscriptionSection() {
   };
 
   return (
-    <section id="filter" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-12">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10">
-            <Filter className="w-4 h-4 text-[#00D4AA]" />
-            <span className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-wider">
-              Subscription Plans
-            </span>
-          </div>
-          <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">
+    <SectionShell id="filter" variant="feature">
+      <SectionHeader
+        icon={Filter}
+        eyebrow="Subscription Plans"
+        title={
+          <>
             THE HELMET IS THE START.
             <br />
             <span className="text-[#00D4AA]">THE FILTER IS THE HABIT.</span>
-          </h2>
-          <p className="text-[#8A8A93] max-w-2xl mx-auto leading-relaxed">
-            AirShield would use replaceable filter cartridges. This creates an opportunity to test
-            whether users would accept a recurring replacement model. Select your preferred plan:
-          </p>
-        </div>
+          </>
+        }
+        description="AirShield would use replaceable filter cartridges. This creates an opportunity to test whether users would accept a recurring replacement model. Select your preferred plan:"
+      />
 
+      <div className="space-y-12">
         {/* Price context */}
         <div className="flex items-center justify-center gap-2 p-4 rounded-xl bg-[#13131A] border border-[#1A1A22] w-fit mx-auto">
           <DollarSign className="w-5 h-5 text-[#F5C842]" />
@@ -182,6 +178,6 @@ export default function FilterSubscriptionSection() {
           </DialogContent>
         </Dialog>
       </div>
-    </section>
+    </SectionShell>
   );
 }

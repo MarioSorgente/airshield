@@ -2,6 +2,8 @@ import { useState } from "react";
 import { AlertCircle, Check, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import SectionShell from "@/components/SectionShell";
+import SectionHeader from "@/components/SectionHeader";
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveObjectionSelection } from "@/lib/airshieldDb";
 
@@ -67,23 +69,20 @@ export default function ObjectionCaptureSection() {
   };
 
   return (
-    <section id="objections" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#FF4D1C]/30 bg-[#FF4D1C]/10">
-            <AlertCircle className="w-4 h-4 text-[#FF4D1C]" />
-            <span className="font-mono-label text-xs text-[#FF4D1C] uppercase tracking-wider">
-              Feedback Collection
-            </span>
-          </div>
-          <h2 className="font-heading text-4xl sm:text-5xl tracking-tight">
-            WHAT WOULD STOP YOU FROM USING THIS?
-          </h2>
-          <p className="text-[#8A8A93] max-w-2xl mx-auto">
-            Your honest feedback helps us build the right version. Select all that apply.
-          </p>
-        </div>
+    <SectionShell
+      id="objections"
+      variant="interactive"
+      surface="raised"
+      glow="orange"
+      containerClassName="max-w-3xl"
+    >
+      <SectionHeader
+        icon={AlertCircle}
+        eyebrow="Feedback Collection"
+        tone="orange"
+        title="WHAT WOULD STOP YOU FROM USING THIS?"
+        description="Your honest feedback helps us build the right version. Select all that apply."
+      />
 
         {!showThanks ? (
           <div className="space-y-8">
@@ -166,7 +165,6 @@ export default function ObjectionCaptureSection() {
             <p className="text-lg font-medium text-[#00D4AA]">We'll keep you updated!</p>
           </div>
         )}
-      </div>
-    </section>
+    </SectionShell>
   );
 }

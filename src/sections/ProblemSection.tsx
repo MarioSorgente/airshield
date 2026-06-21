@@ -1,5 +1,7 @@
 import { Wind, AlertTriangle, Shield, VenetianMask, XCircle } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/motion";
+import SectionShell from "@/components/SectionShell";
+import SectionHeader from "@/components/SectionHeader";
 
 const problemCards = [
   {
@@ -44,28 +46,23 @@ const solutionCards = [
 
 export default function ProblemSection() {
   return (
-    <section id="problem" className="lg:min-h-screen flex flex-col justify-center py-20 sm:py-24 lg:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-10">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#FF4D1C]/30 bg-[#FF4D1C]/10">
-            <AlertTriangle className="w-4 h-4 text-[#FF4D1C]" />
-            <span className="font-mono-label text-xs text-[#FF4D1C] uppercase tracking-wider">
-              The Problem
-            </span>
-          </div>
-          <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl tracking-tight">
+    <SectionShell id="problem" variant="feature" glow="orange">
+      <SectionHeader
+        icon={AlertTriangle}
+        eyebrow="The Problem"
+        tone="orange"
+        titleClassName="lg:text-6xl"
+        title={
+          <>
             YOU DON'T FEEL PM2.5.
             <br />
             <span className="text-[#FF4D1C]">YOU BREATHE IT.</span>
-          </h2>
-          <p className="text-lg text-[#8A8A93] max-w-3xl mx-auto leading-relaxed">
-            PM2.5 is fine particulate pollution from traffic, combustion, industry, and burning.
-            It is small enough to travel deep into the respiratory system. For riders, the commute
-            is not only transportation — it is a daily exposure event.
-          </p>
-        </div>
+          </>
+        }
+        description="PM2.5 is fine particulate pollution from traffic, combustion, industry, and burning. It is small enough to travel deep into the respiratory system. For riders, the commute is not only transportation — it is a daily exposure event."
+      />
 
+      <div className="space-y-10">
         {/* Problem cards */}
         <StaggerContainer className="grid sm:grid-cols-2 gap-6">
           {problemCards.map((card) => (
@@ -122,6 +119,6 @@ export default function ProblemSection() {
           ))}
         </div>
       </div>
-    </section>
+    </SectionShell>
   );
 }
