@@ -10,7 +10,6 @@ export const SECTIONS: SectionMeta[] = [
   { id: "problem", label: "The problem" },
   { id: "exposure-calculator", label: "Exposure" },
   { id: "filter", label: "Filter" },
-  { id: "objections", label: "Feedback" },
   { id: "beta", label: "Beta" },
   { id: "science", label: "Science" },
 ];

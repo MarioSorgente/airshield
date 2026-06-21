@@ -12,7 +12,6 @@ import PriceTestSection from "./sections/PriceTestSection";
 import ProblemSection from "./sections/ProblemSection";
 import ExposureCalculator from "./sections/ExposureCalculator";
 import FilterSubscriptionSection from "./sections/FilterSubscriptionSection";
-import ObjectionCaptureSection from "./sections/ObjectionCaptureSection";
 import BetaCTASection from "./sections/BetaCTASection";
 import ScienceSection from "./sections/ScienceSection";
 import FooterSection from "./sections/FooterSection";
@@ -36,7 +35,6 @@ export default function App() {
       <Reveal><ProblemSection /></Reveal>
       <Reveal><ExposureCalculator /></Reveal>
       <Reveal><FilterSubscriptionSection /></Reveal>
-      <Reveal><ObjectionCaptureSection /></Reveal>
       <Reveal><BetaCTASection /></Reveal>
       <Reveal><ScienceSection /></Reveal>
       <FooterSection />
