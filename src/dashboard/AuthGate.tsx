@@ -38,21 +38,23 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!firebaseReady) return;
+    if (!auth) return;
     return onAuthStateChanged(auth, (u) => {
       setUser(u);
       setReady(true);
     });
   }, []);
 
-  if (!firebaseReady) {
+  if (!firebaseReady || !auth) {
     return (
       <Centered>
         <div className="max-w-sm rounded-2xl border border-[#EADFD3] bg-white p-8 text-center">
           <p className="font-semibold">Firebase not configured</p>
           <p className="mt-2 text-sm text-[#8A7F73]">
-            Missing: {missingFirebaseEnv.join(", ")}. Add them to a local{" "}
-            <code>.env</code> and restart the dev server.
+            {missingFirebaseEnv.length
+              ? `Missing: ${missingFirebaseEnv.join(", ")}.`
+              : "Auth could not initialize."}{" "}
+            Add the VITE_FIREBASE_* vars to your environment and rebuild.
           </p>
         </div>
       </Centered>
@@ -67,6 +69,10 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // Past the guard above, auth is guaranteed non-null; bind a local so it stays
+  // narrowed inside the handlers below.
+  const authClient = auth;
+
   const isAdmin =
     !!user && (!ADMIN_EMAIL || user.email?.toLowerCase() === ADMIN_EMAIL);
 
@@ -74,7 +80,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     return (
       <>
         <button
-          onClick={() => void signOut(auth)}
+          onClick={() => void signOut(authClient)}
           className="fixed right-4 top-4 z-50 rounded-lg border border-[#EADFD3] bg-white px-3 py-1.5 text-xs font-medium text-[#5C5247] shadow-sm hover:bg-[#F7EFE6]"
         >
           Sign out
@@ -95,7 +101,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
             {user.email} can't view this dashboard.
           </p>
           <button
-            onClick={() => void signOut(auth)}
+            onClick={() => void signOut(authClient)}
             className="w-full rounded-lg bg-[#2A2520] py-2.5 font-medium text-white hover:bg-black"
           >
             Sign out
@@ -110,7 +116,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     setSubmitting(true);
     setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      await signInWithEmailAndPassword(authClient, email.trim(), password);
     } catch (err) {
       const code = (err as { code?: string })?.code ?? "";
       setError(
