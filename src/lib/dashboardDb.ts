@@ -219,6 +219,60 @@ export function utmByVisit(events: WithMeta<EventDoc>[]): BreakdownRow[] {
     .sort((a, b) => b.count - a.count);
 }
 
+// ── Derived insights (pure) ─────────────────────────────────────────
+// Thin layer on top of the aggregations above so the dashboard can lead each
+// section with a plain-language takeaway instead of just charts.
+
+export type FunnelDrop = {
+  fromLabel: string;
+  toLabel: string;
+  dropPct: number;
+};
+
+// Biggest single drop between consecutive funnel steps — i.e. where the most
+// people fall out, as a share of the step they fell out of.
+export function funnelDropOffs(steps: FunnelStep[]): FunnelDrop | null {
+  let worst: FunnelDrop | null = null;
+  for (let i = 1; i < steps.length; i++) {
+    const from = steps[i - 1];
+    const to = steps[i];
+    if (from.count <= 0) continue;
+    const dropPct = Math.round((1 - to.count / from.count) * 100);
+    if (dropPct <= 0) continue;
+    if (!worst || dropPct > worst.dropPct) {
+      worst = { fromLabel: from.label, toLabel: to.label, dropPct };
+    }
+  }
+  return worst;
+}
+
+// Share of yes/maybe/no fields that answered "yes" — the core demand signal
+// (would they pay, would they subscribe). `total` ignores blank answers.
+export function sentimentShare<T extends Record<string, unknown>>(
+  rows: WithMeta<T>[],
+  field: keyof T
+): { yesPct: number; yes: number; total: number } {
+  let yes = 0;
+  let total = 0;
+  for (const r of rows) {
+    const raw = r[field];
+    if (raw !== "yes" && raw !== "maybe" && raw !== "no") continue;
+    total += 1;
+    if (raw === "yes") yes += 1;
+  }
+  return { yesPct: total > 0 ? Math.round((yes / total) * 100) : 0, yes, total };
+}
+
+// The single most common answer for a field (already sorted desc by
+// answerBreakdown), or null if there's no data — for persona one-liners.
+export function topAnswer<T extends Record<string, unknown>>(
+  rows: WithMeta<T>[],
+  field: keyof T,
+  labels?: Record<string, string>
+): BreakdownRow | null {
+  return answerBreakdown(rows, field, labels)[0] ?? null;
+}
+
 // Sessions that started the signup but never completed it — the reference's
 // "partial" rows. Matched to events by sessionId.
 export function partialSessions(
