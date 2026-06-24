@@ -30,9 +30,10 @@
   "filterExplode": {
     "available": true,
     "labels": [
-      { "id": "cartridge", "text": "Replaceable filter cartridge" },
-      { "id": "intake", "text": "Air intake" },
-      { "id": "fan", "text": "Fan-assisted airflow" }
+      { "id": "intake", "text": "Rear down-facing intake" },
+      { "id": "cartridge", "text": "PM filter cartridge (replaceable)" },
+      { "id": "fan", "text": "Centrifugal blower" },
+      { "id": "pod", "text": "Sealed battery & control pod (IP54)" }
     ]
   }
 }

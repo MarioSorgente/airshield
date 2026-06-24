@@ -19,7 +19,8 @@ const POSES: Record<ViewPreset | "explore", Pose> = {
   back: { pos: [0, 0.14, -1.55], target: [0, 0, 0] },
   left: { pos: [-1.55, 0.1, 0.02], target: [0, 0, 0] },
   right: { pos: [1.55, 0.1, 0.02], target: [0, 0, 0] },
-  explore: { pos: [0.18, -0.02, 0.92], target: [0, -0.07, 0.2] },
+  // Frame the rear IP54 pod from behind-and-to-the-side for the exploded view.
+  explore: { pos: [-0.78, 0.12, -0.95], target: [0, -0.04, -0.22] },
 };
 
 export const DEFAULT_CAMERA_POSITION = POSES.reset.pos;
@@ -128,10 +129,12 @@ export default function HelmetScene({
         shadow-camera-right={1}
       />
       <directionalLight position={[-2.5, 1, -1.5]} intensity={0.45} color="#cdd6f4" />
+      {/* Cool rim/back light for a dramatic studio edge */}
+      <directionalLight position={[-1.5, 2.2, -2.5]} intensity={0.9} color="#8fb6ff" />
       <pointLight position={[-1, -0.4, 1.2]} intensity={0.35} color="#00D4AA" />
 
       {/* Self-contained reflections (no external HDR download) */}
-      <Environment resolution={64} frames={1}>
+      <Environment resolution={128} frames={1}>
         <Lightformer intensity={1.2} position={[0, 1.5, 0]} scale={[3, 1, 1]} color="#ffffff" />
         <Lightformer intensity={0.6} position={[2, 0, 1]} scale={[1, 2, 1]} color="#9fb4c7" />
         <Lightformer intensity={0.5} position={[-2, 0.5, -1]} scale={[1, 2, 1]} color="#00D4AA" />

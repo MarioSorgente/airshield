@@ -65,12 +65,22 @@ export type ViewPreset = "front" | "left" | "right" | "back" | "reset";
 
 /**
  * Finish → PBR material params. Kept here (not in the manifest) because these
- * are renderer concerns, not content the user replaces.
+ * are renderer concerns, not content the user replaces. `clearcoat` /
+ * `clearcoatRoughness` drive the procedural shell's MeshPhysicalMaterial (a
+ * thin automotive-paint lacquer); GLBHelmet reads only roughness/metalness and
+ * ignores the rest, so the extra fields are safely additive.
  */
-export const FINISH_PBR: Record<Finish, { roughness: number; metalness: number }> = {
-  matte: { roughness: 0.85, metalness: 0.05 },
-  satin: { roughness: 0.5, metalness: 0.15 },
-  gloss: { roughness: 0.18, metalness: 0.35 },
+export interface FinishPbr {
+  roughness: number;
+  metalness: number;
+  clearcoat: number;
+  clearcoatRoughness: number;
+}
+
+export const FINISH_PBR: Record<Finish, FinishPbr> = {
+  matte: { roughness: 0.85, metalness: 0.05, clearcoat: 0.15, clearcoatRoughness: 0.6 },
+  satin: { roughness: 0.5, metalness: 0.15, clearcoat: 0.5, clearcoatRoughness: 0.35 },
+  gloss: { roughness: 0.18, metalness: 0.35, clearcoat: 1.0, clearcoatRoughness: 0.08 },
 };
 
 /**
@@ -111,9 +121,10 @@ export const DEFAULT_MANIFEST: VisualizerManifest = {
   filterExplode: {
     available: true,
     labels: [
-      { id: "cartridge", text: "Replaceable filter cartridge" },
-      { id: "intake", text: "Air intake" },
-      { id: "fan", text: "Fan-assisted airflow" },
+      { id: "intake", text: "Rear down-facing intake" },
+      { id: "cartridge", text: "PM filter cartridge (replaceable)" },
+      { id: "fan", text: "Centrifugal blower" },
+      { id: "pod", text: "Sealed battery & control pod (IP54)" },
     ],
   },
 };
