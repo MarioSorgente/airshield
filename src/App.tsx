@@ -46,6 +46,7 @@ export default function App() {
       </div>
       <Toaster theme="dark" position="top-center" richColors />
       <FirebaseConfigNotice />
+      <Analytics />
     </div>
   );
 }
