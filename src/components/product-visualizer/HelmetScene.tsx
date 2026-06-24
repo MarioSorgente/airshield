@@ -114,11 +114,11 @@ export default function HelmetScene({
 
   return (
     <>
-      {/* Soft studio lighting */}
-      <ambientLight intensity={0.35} />
+      {/* Soft studio lighting — bright enough to read a matte-black shell */}
+      <ambientLight intensity={0.5} />
       <directionalLight
         position={[2.5, 3.5, 2]}
-        intensity={1.5}
+        intensity={1.7}
         castShadow
         shadow-mapSize={[1024, 1024]}
         shadow-camera-near={0.1}
@@ -128,16 +128,18 @@ export default function HelmetScene({
         shadow-camera-left={-1}
         shadow-camera-right={1}
       />
-      <directionalLight position={[-2.5, 1, -1.5]} intensity={0.45} color="#cdd6f4" />
+      {/* Front fill so the face/visor side never falls into pure black */}
+      <directionalLight position={[1.2, 0.6, 2.8]} intensity={0.7} color="#eaf0ff" />
+      <directionalLight position={[-2.5, 1, -1.5]} intensity={0.5} color="#cdd6f4" />
       {/* Cool rim/back light for a dramatic studio edge */}
-      <directionalLight position={[-1.5, 2.2, -2.5]} intensity={0.9} color="#8fb6ff" />
+      <directionalLight position={[-1.5, 2.4, -2.6]} intensity={1.2} color="#8fb6ff" />
       <pointLight position={[-1, -0.4, 1.2]} intensity={0.35} color="#00D4AA" />
 
       {/* Self-contained reflections (no external HDR download) */}
       <Environment resolution={128} frames={1}>
-        <Lightformer intensity={1.2} position={[0, 1.5, 0]} scale={[3, 1, 1]} color="#ffffff" />
-        <Lightformer intensity={0.6} position={[2, 0, 1]} scale={[1, 2, 1]} color="#9fb4c7" />
-        <Lightformer intensity={0.5} position={[-2, 0.5, -1]} scale={[1, 2, 1]} color="#00D4AA" />
+        <Lightformer intensity={1.6} position={[0, 1.5, 0]} scale={[3, 1, 1]} color="#ffffff" />
+        <Lightformer intensity={0.8} position={[2, 0, 1]} scale={[1, 2, 1]} color="#9fb4c7" />
+        <Lightformer intensity={0.6} position={[-2, 0.5, -1]} scale={[1, 2, 1]} color="#00D4AA" />
       </Environment>
 
       {manifest.model.available ? (
