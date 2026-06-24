@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
 import { trackEvent } from "./lib/tracking";
 import { getSessionId, getUtm } from "./lib/session";
 import Reveal from "./components/Reveal";
