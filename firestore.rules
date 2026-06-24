@@ -1,11 +1,24 @@
 rules_version = '2';
 
-// AirShield is a public lead-capture landing page.
-// The browser may CREATE documents in the form collections below, but nobody
-// can read, update, or delete them — leads are viewed only in the Firebase
-// console (or via the Admin SDK). This keeps collected emails/WhatsApp private.
+// AirShield lead-capture landing page.
+//
+// - Public visitors may CREATE documents in the form collections (the forms).
+// - READS are locked to the admin account so collected emails/WhatsApp stay
+//   private even though the Firebase web API key is public (it ships in the
+//   browser bundle). The /dashboard login authenticates as this admin.
+// - The counters/ doc is a public, PII-free integer for the waitlist social
+//   proof ("#N in line") — safe to read/increment without auth.
+//
+// 👉 Set ADMIN_EMAIL below to the Google/email account you'll sign in with.
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'ms.sorgente@gmail.com';
+    }
+
+    // Form + analytics collections: public create, admin-only read.
     match /{collection}/{docId} {
       allow create: if collection in [
         'waitlist_signups',
@@ -15,9 +28,32 @@ service cloud.firestore {
         'filter_subscriptions',
         'use_case_selections',
         'objection_selections',
-        'early_access_reservations'
+        'early_access_reservations',
+        'events'
       ];
-      allow read, update, delete: if false;
+      allow read: if isAdmin() && collection in [
+        'waitlist_signups',
+        'exposure_calculations',
+        'price_responses',
+        'variant_selections',
+        'filter_subscriptions',
+        'use_case_selections',
+        'objection_selections',
+        'early_access_reservations',
+        'events'
+      ];
+      allow update, delete: if false;
+    }
+
+    // Public social-proof counter — holds only { count: <int> }. Anyone may read
+    // it and increment it (never decrease). No personal data lives here.
+    match /counters/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count is int;
+      allow update: if request.resource.data.count is int
+        && request.resource.data.count >= resource.data.count;
+      allow delete: if false;
     }
   }
 }
