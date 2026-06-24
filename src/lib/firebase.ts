@@ -3,7 +3,7 @@
 // Firestore is the only persistence layer used by this app.
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, type Auth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -44,6 +44,21 @@ if (!firebaseReady) {
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
 // Auth backs the admin dashboard login (reads are locked to the admin account
 // in firestore.rules). Public forms don't use auth.
-export const auth = getAuth(app);
+//
+// IMPORTANT: getAuth() throws synchronously on an empty/invalid config (unlike
+// getFirestore, which fails lazily). This module is imported at startup, so an
+// unguarded throw here would blank the ENTIRE site — including the marketing
+// page — if the VITE_FIREBASE_* vars aren't inlined into the build. Only init
+// auth when configured, and never let a failure escape.
+let authInstance: Auth | null = null;
+if (firebaseReady) {
+  try {
+    authInstance = getAuth(app);
+  } catch (e) {
+    console.error("[AirShield] Firebase Auth init failed:", e);
+  }
+}
+export const auth = authInstance;
