@@ -1,8 +1,15 @@
-// Event tracking utility for AirShield market validation
-// Events are logged to console and stored in localStorage
-// Ready to connect to Google Analytics, Meta Pixel, TikTok Pixel, or backend
+// Event tracking utility for AirShield market validation.
+// Events are logged to console, stored in localStorage, AND — for the curated
+// set in PERSISTED_EVENTS — written to the Firestore `events` collection so the
+// admin dashboard can show real traffic, funnel drop-off, and UTM attribution.
+// Still ready to connect to Google Analytics, Meta Pixel, TikTok Pixel.
+
+import { saveEvent } from "./airshieldDb";
+import { getSessionId, getUtm } from "./session";
 
 type TrackingEvent =
+  | "page_view"
+  | "signup_started"
   | "hero_reserve_click"
   | "exposure_calculator_started"
   | "exposure_calculator_completed"
@@ -21,6 +28,22 @@ type TrackingEvent =
   | "preset_view_selected"
   | "filter_explore_opened"
   | "view_reset";
+
+// Only these reach Firestore — keeps write volume sane and avoids persisting
+// noisy UI events (scroll, modal open/close) that don't inform the funnel.
+const PERSISTED_EVENTS: ReadonlySet<TrackingEvent> = new Set<TrackingEvent>([
+  "page_view",
+  "signup_started",
+  "email_submitted",
+  "beta_application_submitted",
+  "hero_reserve_click",
+  "exposure_calculator_started",
+  "exposure_calculator_completed",
+  "price_option_selected",
+  "variant_selected",
+  "use_case_selected",
+  "filter_subscription_selected",
+]);
 
 interface TrackingPayload {
   event: TrackingEvent;
@@ -49,6 +72,23 @@ export function trackEvent(event: TrackingEvent, metadata: Record<string, unknow
     localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
   } catch {
     // localStorage might be full or unavailable
+  }
+
+  // Persist the curated subset to Firestore for the dashboard (fire-and-forget;
+  // never let analytics break the page).
+  if (PERSISTED_EVENTS.has(event)) {
+    try {
+      void saveEvent({
+        event,
+        sessionId: getSessionId(),
+        path: window.location.pathname,
+        url: window.location.href,
+        ...getUtm(),
+        ...metadata,
+      }).catch(() => {});
+    } catch {
+      // ignore — Firebase may be unconfigured locally
+    }
   }
 
   // TODO: Connect to analytics

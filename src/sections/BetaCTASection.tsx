@@ -1,12 +1,18 @@
-import { useState } from "react";
-import { FlaskConical, Check, ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { FlaskConical, Check, ArrowRight, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import SectionShell from "@/components/SectionShell";
 import SectionHeader from "@/components/SectionHeader";
 import { trackEvent, storeFormData } from "@/lib/tracking";
-import { saveWaitlistSignup } from "@/lib/airshieldDb";
+import {
+  saveWaitlistSignup,
+  getWaitlistCount,
+  incrementWaitlistCount,
+} from "@/lib/airshieldDb";
+import { getSessionId, getUtm } from "@/lib/session";
+import { WAITLIST_OFFSET } from "@/lib/config";
 
 const useCaseOptions = [
   { value: "commuting", label: "Commuting" },
@@ -39,9 +45,43 @@ export default function BetaCTASection() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [position, setPosition] = useState<number | null>(null);
+  const [liveCount, setLiveCount] = useState<number | null>(null);
+  const startedRef = useRef(false);
+
+  // Live waitlist size for the social-proof badge above the form.
+  useEffect(() => {
+    getWaitlistCount()
+      .then(setLiveCount)
+      .catch(() => setLiveCount(WAITLIST_OFFSET));
+  }, []);
 
   const updateField = (field: string, value: string | number) => {
+    // Fire "signup_started" once, the first time the visitor touches the form,
+    // so the dashboard funnel can measure start → complete drop-off.
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent("signup_started", { source: "beta_form" });
+    }
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: "AirShield early access",
+      text: "I just joined the AirShield waitlist — clean air for every ride. Skip the line:",
+      url: window.location.origin,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        toast.success("Link copied — share it with a friend!");
+      }
+    } catch {
+      // user dismissed the share sheet — no-op
+    }
   };
 
   const handleSubmit = async () => {
@@ -49,6 +89,7 @@ export default function BetaCTASection() {
 
     setSaving(true);
     try {
+      const utm = getUtm();
       await saveWaitlistSignup({
         name: formData.name,
         email: formData.email,
@@ -60,6 +101,10 @@ export default function BetaCTASection() {
         priceOpinion: (formData.priceOpinion as "yes" | "maybe" | "no") || undefined,
         filterSubscription: (formData.filterSubscription as "yes" | "maybe" | "no") || undefined,
         objection: formData.objection || undefined,
+        sessionId: getSessionId(),
+        utmSource: utm.utmSource,
+        utmMedium: utm.utmMedium,
+        utmCampaign: utm.utmCampaign,
       });
 
       trackEvent("beta_application_submitted", {
@@ -76,6 +121,11 @@ export default function BetaCTASection() {
         ...formData,
         timestamp: new Date().toISOString(),
       });
+
+      // Bump the public counter and use the returned value as their place in line.
+      const newPosition = await incrementWaitlistCount();
+      setPosition(newPosition);
+      setLiveCount(newPosition);
       setSubmitted(true);
     } catch (err) {
       console.error("Beta submit failed:", err);
@@ -101,15 +151,41 @@ export default function BetaCTASection() {
             </div>
             <div className="space-y-2">
               <p className="text-2xl font-heading tracking-wide text-[#00D4AA]">
-                YOU'RE ON THE EARLY LIST.
+                YOU'RE ON THE LIST!
               </p>
+              {position !== null && (
+                <p className="text-lg text-[#F4F1EC]">
+                  You're{" "}
+                  <span className="font-heading text-2xl text-[#00D4AA]">
+                    #{position.toLocaleString()}
+                  </span>{" "}
+                  in line for AirShield early access. We'll message you the moment
+                  your invite is ready.
+                </p>
+              )}
               <p className="text-[#8A8A93]">
                 We'll use your answers to shape priorities, pricing, and launch city.
               </p>
             </div>
+            <Button
+              onClick={handleShare}
+              className="w-full max-w-md mx-auto bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold py-6 text-base rounded-lg transition-all hover:scale-[1.01]"
+            >
+              Skip the line — share with a friend
+              <Share2 className="w-5 h-5 ml-2" />
+            </Button>
           </div>
         ) : (
           <div className="bg-[#0D0D10] rounded-[2rem] border border-[#1A1A22] p-6 lg:p-8 space-y-6">
+            {liveCount !== null && (
+              <div className="flex items-center justify-center gap-2 rounded-full border border-[#00D4AA]/30 bg-[#00D4AA]/10 px-4 py-2 text-sm text-[#00D4AA]">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00D4AA] opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00D4AA]" />
+                </span>
+                Join {liveCount.toLocaleString()}+ riders already in line
+              </div>
+            )}
             {/* Name */}
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">

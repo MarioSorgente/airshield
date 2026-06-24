@@ -3,6 +3,7 @@
 // Firestore is the only persistence layer used by this app.
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -43,3 +44,6 @@ if (!firebaseReady) {
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+// Auth backs the admin dashboard login (reads are locked to the admin account
+// in firestore.rules). Public forms don't use auth.
+export const auth = getAuth(app);

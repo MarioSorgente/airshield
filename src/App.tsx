@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/react";
+import { trackEvent } from "./lib/tracking";
+import { getSessionId, getUtm } from "./lib/session";
 import Reveal from "./components/Reveal";
 import NavBar from "./components/NavBar";
 import ScrollProgress from "./components/ScrollProgress";
@@ -19,8 +20,11 @@ import StickyCTA from "./sections/StickyCTA";
 
 export default function App() {
   useEffect(() => {
-    // Track page load
-    console.log("[AirShield] Page loaded");
+    // Establish session + capture campaign attribution, then record the visit
+    // so the dashboard's traffic/funnel/UTM panels have data.
+    getSessionId();
+    getUtm();
+    trackEvent("page_view");
   }, []);
 
   return (
