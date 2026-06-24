@@ -2,7 +2,8 @@
   "product": "AirShield One",
   "model": {
     "path": "/product-visualizer/model/airshield-one.glb",
-    "available": false,
+    "available": true,
+    "fitSize": 0.34,
     "meshes": {
       "shell": "helmet_shell",
       "visor": "visor",
