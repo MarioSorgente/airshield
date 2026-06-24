@@ -21,7 +21,7 @@ const ADMIN_EMAIL = (
 
 function Centered({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FBF4EC] px-6 text-[#2A2520]">
+    <div className="min-h-screen flex items-center justify-center bg-[#060608] px-6 font-body text-[#F4F1EC]">
       {children}
     </div>
   );
@@ -48,9 +48,9 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (!firebaseReady || !auth) {
     return (
       <Centered>
-        <div className="max-w-sm rounded-2xl border border-[#EADFD3] bg-white p-8 text-center">
+        <div className="max-w-sm rounded-2xl border border-[#1A1A22] bg-[#0D0D10] p-8 text-center">
           <p className="font-semibold">Firebase not configured</p>
-          <p className="mt-2 text-sm text-[#8A7F73]">
+          <p className="mt-2 text-sm text-[#8A8A93]">
             {missingFirebaseEnv.length
               ? `Missing: ${missingFirebaseEnv.join(", ")}.`
               : "Auth could not initialize."}{" "}
@@ -64,7 +64,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (!ready) {
     return (
       <Centered>
-        <p className="text-[#A89C8E]">Loading…</p>
+        <p className="text-[#8A8A93]">Loading…</p>
       </Centered>
     );
   }
@@ -79,13 +79,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (isAdmin) {
     return (
       <>
+        {children}
         <button
           onClick={() => void signOut(authClient)}
-          className="fixed right-4 top-4 z-50 rounded-lg border border-[#EADFD3] bg-white px-3 py-1.5 text-xs font-medium text-[#5C5247] shadow-sm hover:bg-[#F7EFE6]"
+          className="fixed bottom-4 right-4 z-50 rounded-lg border border-[#1A1A22] bg-[#0D0D10]/90 px-3 py-1.5 text-xs font-medium text-[#8A8A93] backdrop-blur transition-colors hover:border-[#00D4AA]/40 hover:text-[#00D4AA]"
         >
           Sign out
         </button>
-        {children}
       </>
     );
   }
@@ -94,15 +94,15 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (user && !isAdmin) {
     return (
       <Centered>
-        <div className="max-w-sm space-y-4 rounded-2xl border border-[#EADFD3] bg-white p-8 text-center">
+        <div className="max-w-sm space-y-4 rounded-2xl border border-[#1A1A22] bg-[#0D0D10] p-8 text-center">
           <div className="text-2xl">🚫</div>
           <p className="font-semibold">Not authorized</p>
-          <p className="text-sm text-[#8A7F73]">
+          <p className="text-sm text-[#8A8A93]">
             {user.email} can't view this dashboard.
           </p>
           <button
             onClick={() => void signOut(authClient)}
-            className="w-full rounded-lg bg-[#2A2520] py-2.5 font-medium text-white hover:bg-black"
+            className="w-full rounded-lg bg-[#00D4AA] py-2.5 font-semibold text-[#060608] transition-colors hover:bg-[#00E0B4]"
           >
             Sign out
           </button>
@@ -135,12 +135,16 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     <Centered>
       <form
         onSubmit={submit}
-        className="w-full max-w-sm space-y-5 rounded-2xl border border-[#EADFD3] bg-white p-8 shadow-sm"
+        className="w-full max-w-sm space-y-5 rounded-2xl border border-[#1A1A22] bg-[#0D0D10] p-8"
       >
         <div className="space-y-1 text-center">
           <div className="text-2xl">🛡️</div>
-          <h1 className="text-xl font-semibold">AirShield Dashboard</h1>
-          <p className="text-sm text-[#8A7F73]">Admin sign-in</p>
+          <h1 className="font-heading text-2xl tracking-wide">
+            AirShield Dashboard
+          </h1>
+          <p className="font-mono-label text-xs uppercase tracking-widest text-[#8A8A93]">
+            Admin sign-in
+          </p>
         </div>
         <input
           type="email"
@@ -151,7 +155,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
             setError(null);
           }}
           placeholder="Email"
-          className="w-full rounded-lg border border-[#EADFD3] bg-[#FBF4EC] px-4 py-3 outline-none focus:border-[#E8654F]"
+          className="w-full rounded-lg border border-[#1A1A22] bg-[#060608] px-4 py-3 text-[#F4F1EC] placeholder:text-[#8A8A93] outline-none transition-colors focus:border-[#00D4AA]"
         />
         <input
           type="password"
@@ -161,13 +165,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
             setError(null);
           }}
           placeholder="Password"
-          className="w-full rounded-lg border border-[#EADFD3] bg-[#FBF4EC] px-4 py-3 outline-none focus:border-[#E8654F]"
+          className="w-full rounded-lg border border-[#1A1A22] bg-[#060608] px-4 py-3 text-[#F4F1EC] placeholder:text-[#8A8A93] outline-none transition-colors focus:border-[#00D4AA]"
         />
-        {error && <p className="text-sm text-[#E8654F]">{error}</p>}
+        {error && <p className="text-sm text-[#FF4D1C]">{error}</p>}
         <button
           type="submit"
           disabled={submitting || !email || !password}
-          className="w-full rounded-lg bg-[#E8654F] py-3 font-semibold text-white transition-colors hover:bg-[#d9573f] disabled:opacity-60"
+          className="w-full rounded-lg bg-[#00D4AA] py-3 font-semibold text-[#060608] transition-colors hover:bg-[#00E0B4] disabled:opacity-60"
         >
           {submitting ? "Signing in…" : "Sign in"}
         </button>
