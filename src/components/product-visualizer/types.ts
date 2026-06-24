@@ -45,6 +45,16 @@ export interface ManifestModel {
    * `meshes.filterCartridge` when omitted.
    */
   explodeGroupPrefix?: string;
+  /**
+   * When set, auto-fit frames ONLY meshes whose name starts with this prefix
+   * (e.g. "Shell_"), so the product helmet stays consistently framed even when
+   * the file also contains a laid-out exploded diagram far off to the side.
+   */
+  fitMeshPrefix?: string;
+  /** Name prefixes hidden in the default (assembled) view. */
+  defaultHidePrefixes?: string[];
+  /** Name prefixes hidden in the explore (decomposed) view. */
+  exploreHidePrefixes?: string[];
 }
 
 export interface ManifestFallback {

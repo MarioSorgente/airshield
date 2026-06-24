@@ -37,6 +37,9 @@ interface GLBHelmetProps {
   fitSize?: number;
   shellMeshNames?: string[];
   explodeGroupPrefix?: string;
+  fitMeshPrefix?: string;
+  defaultHidePrefixes?: string[];
+  exploreHidePrefixes?: string[];
   onFilterSeparationUnavailable?: (unavailable: boolean) => void;
 }
 
@@ -83,6 +86,9 @@ export default function GLBHelmet({
   fitSize = 0.34,
   shellMeshNames,
   explodeGroupPrefix,
+  fitMeshPrefix,
+  defaultHidePrefixes,
+  exploreHidePrefixes,
   onFilterSeparationUnavailable,
 }: GLBHelmetProps) {
   const { scene } = useGLTF(path) as unknown as { scene: THREE.Group };
@@ -115,7 +121,22 @@ export default function GLBHelmet({
     root.scale.setScalar(1);
     root.updateMatrixWorld(true);
 
-    const box = new THREE.Box3().setFromObject(root);
+    // Fit on a subgroup (e.g. the product shell) when requested, so the helmet
+    // stays consistently framed even if the file also holds a far-flung diagram.
+    let box: THREE.Box3;
+    if (fitMeshPrefix) {
+      box = new THREE.Box3();
+      const tmp = new THREE.Box3();
+      root.traverse((o) => {
+        if (o instanceof THREE.Mesh && o.name.startsWith(fitMeshPrefix)) {
+          tmp.setFromObject(o);
+          box.union(tmp);
+        }
+      });
+      if (box.isEmpty()) box.setFromObject(root);
+    } else {
+      box = new THREE.Box3().setFromObject(root);
+    }
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z) || 1;
@@ -123,7 +144,17 @@ export default function GLBHelmet({
     root.scale.setScalar(s);
     root.position.set(-center.x * s, -center.y * s, -center.z * s);
     singleExplodeZ.current = size.z * 0.5;
-  }, [root, rotationDeg, fitSize]);
+  }, [root, rotationDeg, fitSize, fitMeshPrefix]);
+
+  // Show/hide groups for the assembled (default) vs decomposed (explore) view.
+  useEffect(() => {
+    const hide = explore ? exploreHidePrefixes : defaultHidePrefixes;
+    root.traverse((o) => {
+      if (o instanceof THREE.Mesh) {
+        o.visible = !hide || !hide.some((p) => o.name.startsWith(p));
+      }
+    });
+  }, [root, explore, defaultHidePrefixes, exploreHidePrefixes]);
 
   // Prepare materials (normals, vertex colours, transparency, shell tinting) and
   // resolve the explode group / parts.
@@ -215,9 +246,20 @@ export default function GLBHelmet({
         }
       }
       highlightMatsRef.current = highlights;
-      onFilterSeparationUnavailable?.(!cartridge);
+      // A visibility-based decomposition (hide prefixes) always has a filter view.
+      const hasDecomp =
+        (defaultHidePrefixes?.length ?? 0) > 0 || (exploreHidePrefixes?.length ?? 0) > 0;
+      onFilterSeparationUnavailable?.(hasDecomp ? false : !cartridge);
     }
-  }, [root, meshes, shellMeshNames, explodeGroupPrefix, onFilterSeparationUnavailable]);
+  }, [
+    root,
+    meshes,
+    shellMeshNames,
+    explodeGroupPrefix,
+    defaultHidePrefixes,
+    exploreHidePrefixes,
+    onFilterSeparationUnavailable,
+  ]);
 
   // Apply the selected colour + finish to the shell materials.
   useEffect(() => {
