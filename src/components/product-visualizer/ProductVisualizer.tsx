@@ -132,7 +132,6 @@ export default function ProductVisualizer({
 
   const activeManifest = manifest ?? DEFAULT_MANIFEST;
   const color = colorForVariant(activeManifest, selectedVariant);
-  const showFilterCloseup = explore && separationUnavailable;
 
   return (
     <div
@@ -164,18 +163,6 @@ export default function ProductVisualizer({
             </Suspense>
           ) : (
             <LoadingState />
-          )}
-
-          {/* Filter close-up fallback (only when the model lacks a cartridge mesh) */}
-          {showFilterCloseup && (
-            <img
-              src={activeManifest.fallback.filterCloseup}
-              alt="AirShield One filter close-up"
-              onError={(e) => {
-                e.currentTarget.src = activeManifest.fallback.default;
-              }}
-              className="absolute inset-0 z-10 h-full w-full object-contain p-6"
-            />
           )}
 
           {/* Overlays */}

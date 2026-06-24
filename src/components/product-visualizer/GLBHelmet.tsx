@@ -17,14 +17,15 @@ import { FINISH_PBR, type ManifestColor, type ManifestMeshes } from "./types";
 //     visor, airflow indicators) become transparent.
 //   • Recolours the SHELL: every mesh in `shellMeshNames` (or the single named
 //     `shell`) renders in the solid variant colour with vertex colours off; all
-//     other meshes keep their design colours. The colour variant buttons drive it.
-//   • Separates a named `filter_cartridge` (+ `fan_module`) in explode mode; if no
-//     such part exists it reports separation unavailable and the UI shows a
-//     close-up instead.
+//     other meshes keep their design colours.
+//   • Explode mode: every mesh whose name starts with `explodeGroupPrefix` (the
+//     serviceable filter assembly) slides out radially together and glows teal.
+//     Falls back to separating the single named `filterCartridge` / `fanModule`.
 //
 // Materials are CLONED before editing so useGLTF's cached materials are untouched.
 
 const TEAL = "#00D4AA";
+const ZERO = new THREE.Vector3();
 
 interface GLBHelmetProps {
   path: string;
@@ -35,6 +36,7 @@ interface GLBHelmetProps {
   rotationDeg?: [number, number, number];
   fitSize?: number;
   shellMeshNames?: string[];
+  explodeGroupPrefix?: string;
   onFilterSeparationUnavailable?: (unavailable: boolean) => void;
 }
 
@@ -80,6 +82,7 @@ export default function GLBHelmet({
   rotationDeg,
   fitSize = 0.34,
   shellMeshNames,
+  explodeGroupPrefix,
   onFilterSeparationUnavailable,
 }: GLBHelmetProps) {
   const { scene } = useGLTF(path) as unknown as { scene: THREE.Group };
@@ -87,11 +90,15 @@ export default function GLBHelmet({
   // Clone the scene so multiple mounts / HMR don't share mutated transforms.
   const root = useMemo(() => scene.clone(true), [scene]);
 
+  // Single-part explode fallback (used when no explodeGroupPrefix).
   const cartridgeRef = useRef<THREE.Object3D | null>(null);
   const cartridgeBaseZ = useRef(0);
   const fanRef = useRef<THREE.Object3D | null>(null);
   const fanBaseZ = useRef(0);
-  const explodeAmt = useRef(0.12);
+  const singleExplodeZ = useRef(0.12);
+  // Group explode (the serviceable filter assembly).
+  const explodeMeshesRef = useRef<THREE.Mesh[]>([]);
+  const explodeOffsetRef = useRef(new THREE.Vector3());
   const shellMatsRef = useRef<THREE.MeshStandardMaterial[]>([]);
   const highlightMatsRef = useRef<THREE.MeshStandardMaterial[]>([]);
 
@@ -115,19 +122,23 @@ export default function GLBHelmet({
     const s = fitSize / maxDim;
     root.scale.setScalar(s);
     root.position.set(-center.x * s, -center.y * s, -center.z * s);
-    explodeAmt.current = size.z * 0.5; // model-local units; scales with root
+    singleExplodeZ.current = size.z * 0.5;
   }, [root, rotationDeg, fitSize]);
 
-  // Prepare materials: normals, vertex colours, transparency, shell tinting.
+  // Prepare materials (normals, vertex colours, transparency, shell tinting) and
+  // resolve the explode group / parts.
   useEffect(() => {
     const shellSet = shellMeshNames && shellMeshNames.length ? new Set(shellMeshNames) : null;
     const shellMats: THREE.MeshStandardMaterial[] = [];
+    const explodeMeshes: THREE.Mesh[] = [];
+    const highlights: THREE.MeshStandardMaterial[] = [];
 
     root.traverse((o) => {
       if (!(o instanceof THREE.Mesh)) return;
       o.castShadow = true;
       const geo = o.geometry as THREE.BufferGeometry;
       if (!geo.getAttribute("normal")) geo.computeVertexNormals();
+      geo.computeBoundingBox();
 
       const src = (Array.isArray(o.material) ? o.material[0] : o.material) as
         | THREE.Material
@@ -147,8 +158,15 @@ export default function GLBHelmet({
           mat.depthWrite = false;
         }
       }
-      mat.needsUpdate = true;
       o.material = mat;
+
+      if (explodeGroupPrefix && o.name.startsWith(explodeGroupPrefix)) {
+        explodeMeshes.push(o);
+        mat.emissive = new THREE.Color(TEAL);
+        mat.emissiveIntensity = 0;
+        highlights.push(mat);
+      }
+      mat.needsUpdate = true;
     });
 
     // Fallback: if no named shell matched, tint the largest opaque mesh.
@@ -164,28 +182,42 @@ export default function GLBHelmet({
     }
     shellMatsRef.current = shellMats;
 
-    // Explode targets + highlight materials (no-ops when the parts are absent).
-    const cartridge = root.getObjectByName(meshes.filterCartridge);
-    cartridgeRef.current = cartridge ?? null;
-    if (cartridge) cartridgeBaseZ.current = cartridge.position.z;
-    onFilterSeparationUnavailable?.(!cartridge);
-
-    const fan = root.getObjectByName(meshes.fanModule);
-    fanRef.current = fan ?? null;
-    if (fan) fanBaseZ.current = fan.position.z;
-
-    const highlights: THREE.MeshStandardMaterial[] = [];
-    for (const name of [meshes.filterHousing, meshes.filterCartridge]) {
-      const obj = root.getObjectByName(name);
-      if (obj instanceof THREE.Mesh && obj.material) {
-        const mat = obj.material as THREE.MeshStandardMaterial;
-        mat.emissive = new THREE.Color(TEAL);
-        mat.emissiveIntensity = 0;
-        highlights.push(mat);
+    if (explodeGroupPrefix) {
+      // Radial outward offset = direction from the model centre to the group centre.
+      explodeMeshesRef.current = explodeMeshes;
+      const whole = new THREE.Box3();
+      root.traverse((o) => {
+        if (o instanceof THREE.Mesh && o.geometry.boundingBox) whole.union(o.geometry.boundingBox);
+      });
+      const grp = new THREE.Box3();
+      for (const m of explodeMeshes) if (m.geometry.boundingBox) grp.union(m.geometry.boundingBox);
+      const dir = grp.getCenter(new THREE.Vector3()).sub(whole.getCenter(new THREE.Vector3()));
+      if (dir.lengthSq() < 1e-6) dir.set(0, 0, 1);
+      dir.normalize().multiplyScalar(whole.getSize(new THREE.Vector3()).length() * 0.22);
+      explodeOffsetRef.current = dir;
+      highlightMatsRef.current = highlights;
+      onFilterSeparationUnavailable?.(explodeMeshes.length === 0);
+    } else {
+      // Single-part fallback.
+      const cartridge = root.getObjectByName(meshes.filterCartridge);
+      cartridgeRef.current = cartridge ?? null;
+      if (cartridge) cartridgeBaseZ.current = cartridge.position.z;
+      const fan = root.getObjectByName(meshes.fanModule);
+      fanRef.current = fan ?? null;
+      if (fan) fanBaseZ.current = fan.position.z;
+      for (const name of [meshes.filterHousing, meshes.filterCartridge]) {
+        const obj = root.getObjectByName(name);
+        if (obj instanceof THREE.Mesh && obj.material) {
+          const mat = obj.material as THREE.MeshStandardMaterial;
+          mat.emissive = new THREE.Color(TEAL);
+          mat.emissiveIntensity = 0;
+          highlights.push(mat);
+        }
       }
+      highlightMatsRef.current = highlights;
+      onFilterSeparationUnavailable?.(!cartridge);
     }
-    highlightMatsRef.current = highlights;
-  }, [root, meshes, shellMeshNames, onFilterSeparationUnavailable]);
+  }, [root, meshes, shellMeshNames, explodeGroupPrefix, onFilterSeparationUnavailable]);
 
   // Apply the selected colour + finish to the shell materials.
   useEffect(() => {
@@ -200,19 +232,26 @@ export default function GLBHelmet({
 
   useFrame((_, delta) => {
     const t = reducedMotion ? 1 : Math.min(1, delta * 6);
-    if (cartridgeRef.current) {
-      const target = cartridgeBaseZ.current + (explore ? explodeAmt.current : 0);
-      cartridgeRef.current.position.z = THREE.MathUtils.lerp(
-        cartridgeRef.current.position.z,
-        target,
-        t,
-      );
+
+    if (explodeGroupPrefix) {
+      const target = explore ? explodeOffsetRef.current : ZERO;
+      for (const m of explodeMeshesRef.current) m.position.lerp(target, t);
+    } else {
+      if (cartridgeRef.current) {
+        const target = cartridgeBaseZ.current + (explore ? singleExplodeZ.current : 0);
+        cartridgeRef.current.position.z = THREE.MathUtils.lerp(
+          cartridgeRef.current.position.z,
+          target,
+          t,
+        );
+      }
+      if (fanRef.current) {
+        const target = fanBaseZ.current + (explore ? singleExplodeZ.current * 0.6 : 0);
+        fanRef.current.position.z = THREE.MathUtils.lerp(fanRef.current.position.z, target, t);
+      }
     }
-    if (fanRef.current) {
-      const target = fanBaseZ.current + (explore ? explodeAmt.current * 0.6 : 0);
-      fanRef.current.position.z = THREE.MathUtils.lerp(fanRef.current.position.z, target, t);
-    }
-    const targetEmissive = explore ? 0.55 : 0;
+
+    const targetEmissive = explore ? 0.5 : 0;
     for (const mat of highlightMatsRef.current) {
       mat.emissiveIntensity = THREE.MathUtils.lerp(mat.emissiveIntensity, targetEmissive, t);
     }

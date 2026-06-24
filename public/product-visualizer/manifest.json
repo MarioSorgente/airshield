@@ -14,6 +14,7 @@
       "Helmet_Jaw_Protection_Rail_R",
       "Helmet_Jaw_Protection_Rail_L"
     ],
+    "explodeGroupPrefix": "AS02_",
     "meshes": {
       "shell": "Helmet_Safety_Shell_Crown",
       "visor": "Helmet_Tinted_Visor",

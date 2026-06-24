@@ -19,8 +19,8 @@ const POSES: Record<ViewPreset | "explore", Pose> = {
   back: { pos: [0, 0.14, -1.55], target: [0, 0, 0] },
   left: { pos: [-1.55, 0.1, 0.02], target: [0, 0, 0] },
   right: { pos: [1.55, 0.1, 0.02], target: [0, 0, 0] },
-  // Frame the rear IP54 pod from behind-and-to-the-side for the exploded view.
-  explore: { pos: [-0.78, 0.12, -0.95], target: [0, -0.04, -0.22] },
+  // Frame the filter assembly (rear-right after the model's +90° Y orientation).
+  explore: { pos: [0.72, 0.48, -0.82], target: [0.13, 0.08, -0.15] },
 };
 
 export const DEFAULT_CAMERA_POSITION = POSES.reset.pos;
@@ -152,6 +152,7 @@ export default function HelmetScene({
           rotationDeg={manifest.model.rotationDeg}
           fitSize={manifest.model.fitSize}
           shellMeshNames={manifest.model.shellMeshNames}
+          explodeGroupPrefix={manifest.model.explodeGroupPrefix}
           onFilterSeparationUnavailable={onFilterSeparationUnavailable}
         />
       ) : (

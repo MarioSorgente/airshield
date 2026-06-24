@@ -38,6 +38,13 @@ export interface ManifestModel {
    * keeps its baked vertex colours. Falls back to `meshes.shell` when omitted.
    */
   shellMeshNames?: string[];
+  /**
+   * Name prefix of the serviceable filter assembly (e.g. "AS02_"). In explore
+   * mode every mesh with this prefix slides out together (radially outward) and
+   * glows, giving a real exploded view. Falls back to the single
+   * `meshes.filterCartridge` when omitted.
+   */
+  explodeGroupPrefix?: string;
 }
 
 export interface ManifestFallback {
