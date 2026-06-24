@@ -149,6 +149,8 @@ export default function HelmetScene({
           color={color}
           explore={explore}
           reducedMotion={reducedMotion}
+          rotationDeg={manifest.model.rotationDeg}
+          fitSize={manifest.model.fitSize}
           onFilterSeparationUnavailable={onFilterSeparationUnavailable}
         />
       ) : (

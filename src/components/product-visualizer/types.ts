@@ -28,6 +28,10 @@ export interface ManifestModel {
   /** When false, the procedural placeholder helmet is used (no GLB fetched). */
   available: boolean;
   meshes: ManifestMeshes;
+  /** Optional manual orientation nudge (degrees), applied before auto-fit. */
+  rotationDeg?: [number, number, number];
+  /** Target size (largest dimension, world units) for auto-fit. Default 0.34. */
+  fitSize?: number;
 }
 
 export interface ManifestFallback {
