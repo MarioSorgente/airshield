@@ -32,6 +32,12 @@ export interface ManifestModel {
   rotationDeg?: [number, number, number];
   /** Target size (largest dimension, world units) for auto-fit. Default 0.34. */
   fitSize?: number;
+  /**
+   * Mesh names that make up the recolourable shell. When set, these meshes are
+   * rendered in the solid variant colour (vertex colours off); every other mesh
+   * keeps its baked vertex colours. Falls back to `meshes.shell` when omitted.
+   */
+  shellMeshNames?: string[];
 }
 
 export interface ManifestFallback {

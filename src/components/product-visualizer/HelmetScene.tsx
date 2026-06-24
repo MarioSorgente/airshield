@@ -151,6 +151,7 @@ export default function HelmetScene({
           reducedMotion={reducedMotion}
           rotationDeg={manifest.model.rotationDeg}
           fitSize={manifest.model.fitSize}
+          shellMeshNames={manifest.model.shellMeshNames}
           onFilterSeparationUnavailable={onFilterSeparationUnavailable}
         />
       ) : (

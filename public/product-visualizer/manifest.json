@@ -3,10 +3,20 @@
   "model": {
     "path": "/product-visualizer/model/airshield-one.glb",
     "available": true,
-    "fitSize": 0.34,
+    "fitSize": 0.4,
+    "rotationDeg": [0, 90, 0],
+    "shellMeshNames": [
+      "Helmet_Safety_Shell_Crown",
+      "Helmet_Rear_Neck_Shell",
+      "Helmet_Chin_Bar_Shell",
+      "Helmet_Chin_Center_Plate",
+      "Helmet_Crown_Ridge",
+      "Helmet_Jaw_Protection_Rail_R",
+      "Helmet_Jaw_Protection_Rail_L"
+    ],
     "meshes": {
-      "shell": "helmet_shell",
-      "visor": "visor",
+      "shell": "Helmet_Safety_Shell_Crown",
+      "visor": "Helmet_Tinted_Visor",
       "filterHousing": "filter_housing",
       "filterCartridge": "filter_cartridge",
       "fanModule": "fan_module"
