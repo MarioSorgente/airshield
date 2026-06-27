@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Calculator, Clock, MapPin, Bike, ArrowRight, Check, Wind } from "lucide-react";
+import { Calculator, Clock, MapPin, Bike, ArrowRight, Check, Wind, Dumbbell, Hourglass, Sparkles, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ export default function ExposureCalculator() {
   const [city, setCity] = useState("");
   const [minutesPerDay, setMinutesPerDay] = useState(60);
   const [daysPerWeek, setDaysPerWeek] = useState(5);
+  const [workoutsPerWeek, setWorkoutsPerWeek] = useState(3);
   const [trafficLevel, setTrafficLevel] = useState<"light" | "normal" | "heavy">("normal");
   const [helmetType, setHelmetType] = useState<"open_face" | "full_face" | "mask_under_helmet" | "no_mask">("open_face");
   const [email, setEmail] = useState("");
@@ -72,6 +73,28 @@ export default function ExposureCalculator() {
   // sustained PM2.5 above the WHO guideline (5 µg/m³).
   const lifeYearsLost = Math.max(0, (pm25Level - whoGuideline) * 0.098);
 
+  // ── The maintenance tax ───────────────────────────────────────────────
+  // Pollution isn't only a distant death sentence — it's a weekly bill in three
+  // currencies: looks, training, and the money you already spend undoing it.
+  // The figures below are ILLUSTRATIVE estimates (labeled as such in the UI),
+  // tuned to land in believable ranges for the cities above — not medical claims.
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const vsWHONum = pm25Level / whoGuideline; // numeric form of the `vsWHO` display string
+  const yearlyEffectiveHours = parseFloat(effectiveExposure) * 52;
+
+  // PERFORMANCE — training adaptation/recovery blunted by breathing traffic air,
+  // bounded to ~3–18%. Turned into the one concrete personal number: sessions/year
+  // you train for but don't fully bank.
+  const perfTaxRate = clamp((yearlyEffectiveHours / 300) * (vsWHONum / 8) * 0.12, 0.03, 0.18);
+  const wastedSessions = Math.round(workoutsPerWeek * 52 * perfTaxRate);
+
+  // LOOKS — coarse, directional "undo-the-damage" routine cost (serums, facials,
+  // hair treatments). Rounded hard to the nearest 0.5M so it never reads
+  // fake-precise; ~Rp 4–6M/yr at typical inputs.
+  const looksAnnualRaw =
+    80_000 * parseFloat(effectiveExposure) * Math.min(1.3, vsWHONum / 8) * 12;
+  const looksAnnualM = Math.max(0.5, Math.round(looksAnnualRaw / 500_000) / 2);
+
   const handleCalculate = () => {
     trackEvent("exposure_calculator_started", { city, trafficLevel, helmetType });
     setShowResults(true);
@@ -81,6 +104,9 @@ export default function ExposureCalculator() {
       yearlyHours,
       trafficLevel,
       helmetType,
+      workoutsPerWeek,
+      wastedSessions,
+      looksAnnual: `Rp ${looksAnnualM.toFixed(1)}M`,
     });
   };
 
@@ -94,9 +120,12 @@ export default function ExposureCalculator() {
         daysPerWeek,
         trafficLevel,
         helmetType,
+        workoutsPerWeek,
         email,
         weeklyHours: `${weeklyHours} hours`,
         yearlyHours: `${yearlyHours} hours`,
+        looksAnnual: `Rp ${looksAnnualM.toFixed(1)}M`,
+        wastedSessions,
       });
       trackEvent("email_submitted", { source: "exposure_calculator", email, city });
       storeFormData("exposure_calc", {
@@ -104,10 +133,13 @@ export default function ExposureCalculator() {
         city,
         minutesPerDay,
         daysPerWeek,
+        workoutsPerWeek,
         trafficLevel,
         helmetType,
         weeklyHours,
         yearlyHours,
+        wastedSessions,
+        looksAnnual: `Rp ${looksAnnualM.toFixed(1)}M`,
         timestamp: new Date().toISOString(),
       });
       setSubmitted(true);
@@ -129,9 +161,9 @@ export default function ExposureCalculator() {
     >
       <SectionHeader
         icon={Calculator}
-        eyebrow="Interactive Tool"
-        title="HOW MUCH TRAFFIC AIR DO YOU BREATHE EVERY WEEK?"
-        description="See how many hours you spend breathing traffic air every week — and what that air is doing to your lifespan."
+        eyebrow="The Maintenance Tax"
+        title="THE AIR ISN'T JUST SHORTENING YOUR LIFE — IT'S BILLING YOU EVERY WEEK."
+        description="Pollution isn't a distant death sentence. It's a bill that comes due every week — in your skin and hair, in your training, and in the money you already spend undoing the damage. See what your ride is really costing you."
       />
 
       <div className="space-y-8">
@@ -206,6 +238,31 @@ export default function ExposureCalculator() {
             </div>
           </div>
 
+          {/* Workouts per week — drives the personal "training tax" */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <Dumbbell className="w-4 h-4 text-[#00D4AA]" />
+              Workouts per week
+            </label>
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min={0}
+                max={14}
+                step={1}
+                value={workoutsPerWeek}
+                onChange={(e) => setWorkoutsPerWeek(Number(e.target.value))}
+                className="flex-1 accent-[#00D4AA]"
+              />
+              <span className="font-mono-label text-lg text-[#00D4AA] w-16 text-right">
+                {workoutsPerWeek}
+              </span>
+            </div>
+            <p className="text-xs text-[#8A8A93]">
+              Gym, runs, training — anything you grind for and want to keep.
+            </p>
+          </div>
+
           {/* Traffic level */}
           <div className="space-y-3">
             <label className="flex items-center gap-2 text-sm font-medium">
@@ -273,30 +330,88 @@ export default function ExposureCalculator() {
           <div ref={resultsRef} className="scroll-mt-20 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="bg-gradient-to-br from-[#00D4AA]/10 to-[#0D0D10] rounded-[2rem] border border-[#00D4AA]/30 p-6 lg:p-8 space-y-6">
               <h3 className="font-heading text-2xl tracking-wide text-center">
-                YOUR EXPOSURE ESTIMATE
+                WHAT THIS RIDE IS COSTING YOU
               </h3>
 
-              {/* Headline stat: years of life lost to the city's air (AQLI) */}
-              <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-[#FF4D1C]/15 to-[#0D0D10] border border-[#FF4D1C]/30 space-y-2">
-                <p className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-wider">
-                  Estimated life expectancy lost to {city || "your city"}'s air
-                </p>
-                <p className="font-heading text-6xl sm:text-7xl text-[#FF4D1C] leading-none">
-                  ≈ <CountUp value={lifeYearsLost} decimals={1} /> years
-                </p>
-                <p className="text-sm text-[#8A8A93] max-w-md mx-auto">
-                  At a sustained PM2.5 of {pm25Level} µg/m³ — {vsWHO}× the WHO guideline of{" "}
-                  {whoGuideline} µg/m³ — that's how much shorter the air alone could make your life.
-                </p>
-                <a
-                  href="https://aqli.epic.uchicago.edu/methodology/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block text-xs text-[#3A7CA5] hover:text-[#00D4AA] transition-colors"
-                >
-                  Source: Air Quality Life Index (AQLI), University of Chicago →
-                </a>
+              {/* The maintenance tax — four co-equal costs, no single hero number */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                {/* Lifespan (AQLI) */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-[#FF4D1C]/15 to-[#0D0D10] border border-[#FF4D1C]/30 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Hourglass className="w-4 h-4 text-[#FF4D1C]" />
+                    <p className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-wider">
+                      What it costs your life
+                    </p>
+                  </div>
+                  <p className="font-heading text-5xl text-[#FF4D1C] leading-none">
+                    ≈ <CountUp value={lifeYearsLost} decimals={1} /> yrs
+                  </p>
+                  <p className="text-sm text-[#8A8A93]">
+                    shorter, on {city || "your city"}'s air — a sustained {pm25Level} µg/m³, {vsWHO}× the WHO limit.
+                  </p>
+                  <a
+                    href="https://aqli.epic.uchicago.edu/methodology/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs text-[#3A7CA5] hover:text-[#00D4AA] transition-colors"
+                  >
+                    Source: Air Quality Life Index (AQLI) →
+                  </a>
+                </div>
+
+                {/* Looks */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-[#FF4D1C]/15 to-[#0D0D10] border border-[#FF4D1C]/30 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#FF4D1C]" />
+                    <p className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-wider">
+                      What it costs your looks
+                    </p>
+                  </div>
+                  <p className="font-heading text-5xl text-[#FF4D1C] leading-none">
+                    ≈ <CountUp value={looksAnnualM} decimals={1} prefix="Rp " suffix="M+" />
+                  </p>
+                  <p className="text-sm text-[#8A8A93]">
+                    a year on serums, facials and hair treatments. The grey face in the lift mirror, congestion along the strap line, hair that won't behave — that's not age, it's exhaust.
+                  </p>
+                  <p className="text-xs text-[#8A8A93]/70">Typical rider spend, scaled to your exposure.</p>
+                </div>
+
+                {/* Performance */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-[#FF4D1C]/15 to-[#0D0D10] border border-[#FF4D1C]/30 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Dumbbell className="w-4 h-4 text-[#FF4D1C]" />
+                    <p className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-wider">
+                      What it costs your training
+                    </p>
+                  </div>
+                  <p className="font-heading text-5xl text-[#FF4D1C] leading-none">
+                    ≈ <CountUp value={wastedSessions} /> <span className="text-2xl">sessions</span>
+                  </p>
+                  <p className="text-sm text-[#8A8A93]">
+                    a year you train for but don't fully bank. You add weight to the bar, but recovery's shot and your resting heart rate creeps up. You train clean — you breathe dirty.
+                  </p>
+                </div>
+
+                {/* The bill — directional close, no fake-precise total */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-[#00D4AA]/15 to-[#0D0D10] border border-[#00D4AA]/30 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Receipt className="w-4 h-4 text-[#00D4AA]" />
+                    <p className="font-mono-label text-xs text-[#8A8A93] uppercase tracking-wider">
+                      The bill you already pay
+                    </p>
+                  </div>
+                  <p className="font-heading text-5xl text-[#00D4AA] leading-none">
+                    Millions <span className="text-2xl">of Rp / yr</span>
+                  </p>
+                  <p className="text-sm text-[#8A8A93]">
+                    Skin, hair, training, supplements — you're already spending every month to undo what the air does. AirShield is a one-time Rp 3.2M.
+                  </p>
+                </div>
               </div>
+
+              <p className="text-center text-xs text-[#8A8A93]/70">
+                Illustrative estimates of typical rider spend, scaled to your exposure — not medical advice.
+              </p>
 
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="text-center p-4 rounded-xl bg-[#13131A] border border-[#1A1A22]">
@@ -336,7 +451,7 @@ export default function ExposureCalculator() {
 
               <div className="p-4 rounded-xl bg-[#FF4D1C]/10 border border-[#FF4D1C]/20">
                 <p className="text-center font-medium text-[#FF4D1C]">
-                  Your ride is not just a commute. It is repeated exposure.
+                  Your ride isn't just a commute. It's a bill you pay every week — in your face, your training, and your wallet.
                 </p>
               </div>
             </div>

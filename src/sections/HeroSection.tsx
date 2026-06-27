@@ -113,6 +113,10 @@ export default function HeroSection() {
                 Every day, Indonesian riders sit inches from exhaust, dust, and PM2.5.
                 AirShield is a premium filtration helmet built for people who breathe traffic daily.
               </p>
+              <p className="text-base text-[#F4F1EC]/80 max-w-xl leading-relaxed">
+                It doesn't stop at your lungs — it shows up in the mirror, in your workouts,
+                and in everything you buy to fix it.
+              </p>
             </motion.div>
 
             {/* Price anchor */}
