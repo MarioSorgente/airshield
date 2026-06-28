@@ -28,6 +28,33 @@ export interface ManifestModel {
   /** When false, the procedural placeholder helmet is used (no GLB fetched). */
   available: boolean;
   meshes: ManifestMeshes;
+  /** Optional manual orientation nudge (degrees), applied before auto-fit. */
+  rotationDeg?: [number, number, number];
+  /** Target size (largest dimension, world units) for auto-fit. Default 0.34. */
+  fitSize?: number;
+  /**
+   * Mesh names that make up the recolourable shell. When set, these meshes are
+   * rendered in the solid variant colour (vertex colours off); every other mesh
+   * keeps its baked vertex colours. Falls back to `meshes.shell` when omitted.
+   */
+  shellMeshNames?: string[];
+  /**
+   * Name prefix of the serviceable filter assembly (e.g. "AS02_"). In explore
+   * mode every mesh with this prefix slides out together (radially outward) and
+   * glows, giving a real exploded view. Falls back to the single
+   * `meshes.filterCartridge` when omitted.
+   */
+  explodeGroupPrefix?: string;
+  /**
+   * When set, auto-fit frames ONLY meshes whose name starts with this prefix
+   * (e.g. "Shell_"), so the product helmet stays consistently framed even when
+   * the file also contains a laid-out exploded diagram far off to the side.
+   */
+  fitMeshPrefix?: string;
+  /** Name prefixes hidden in the default (assembled) view. */
+  defaultHidePrefixes?: string[];
+  /** Name prefixes hidden in the explore (decomposed) view. */
+  exploreHidePrefixes?: string[];
 }
 
 export interface ManifestFallback {
@@ -65,12 +92,22 @@ export type ViewPreset = "front" | "left" | "right" | "back" | "reset";
 
 /**
  * Finish → PBR material params. Kept here (not in the manifest) because these
- * are renderer concerns, not content the user replaces.
+ * are renderer concerns, not content the user replaces. `clearcoat` /
+ * `clearcoatRoughness` drive the procedural shell's MeshPhysicalMaterial (a
+ * thin automotive-paint lacquer); GLBHelmet reads only roughness/metalness and
+ * ignores the rest, so the extra fields are safely additive.
  */
-export const FINISH_PBR: Record<Finish, { roughness: number; metalness: number }> = {
-  matte: { roughness: 0.85, metalness: 0.05 },
-  satin: { roughness: 0.5, metalness: 0.15 },
-  gloss: { roughness: 0.18, metalness: 0.35 },
+export interface FinishPbr {
+  roughness: number;
+  metalness: number;
+  clearcoat: number;
+  clearcoatRoughness: number;
+}
+
+export const FINISH_PBR: Record<Finish, FinishPbr> = {
+  matte: { roughness: 0.85, metalness: 0.05, clearcoat: 0.15, clearcoatRoughness: 0.6 },
+  satin: { roughness: 0.5, metalness: 0.15, clearcoat: 0.5, clearcoatRoughness: 0.35 },
+  gloss: { roughness: 0.18, metalness: 0.35, clearcoat: 1.0, clearcoatRoughness: 0.08 },
 };
 
 /**
@@ -111,9 +148,10 @@ export const DEFAULT_MANIFEST: VisualizerManifest = {
   filterExplode: {
     available: true,
     labels: [
-      { id: "cartridge", text: "Replaceable filter cartridge" },
-      { id: "intake", text: "Air intake" },
-      { id: "fan", text: "Fan-assisted airflow" },
+      { id: "intake", text: "Rear down-facing intake" },
+      { id: "cartridge", text: "PM filter cartridge (replaceable)" },
+      { id: "fan", text: "Centrifugal blower" },
+      { id: "pod", text: "Sealed battery & control pod (IP54)" },
     ],
   },
 };
