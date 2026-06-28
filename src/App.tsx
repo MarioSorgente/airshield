@@ -34,13 +34,13 @@ export default function App() {
       <NavBar />
       <SectionDots />
       <Reveal><HeroSection /></Reveal>
-      <Reveal><ProductCardSection /></Reveal>
       <Reveal><ProblemSection /></Reveal>
-      <Reveal><UseCaseSection /></Reveal>
-      <Reveal><PriceTestSection /></Reveal>
       <Reveal><ExposureCalculator /></Reveal>
-      <Reveal><BetaCTASection /></Reveal>
+      <Reveal><ProductCardSection /></Reveal>
+      <Reveal><UseCaseSection /></Reveal>
       <Reveal><ScienceSection /></Reveal>
+      <Reveal><PriceTestSection /></Reveal>
+      <Reveal><BetaCTASection /></Reveal>
       <FooterSection />
       <div className="lg:hidden">
         <StickyCTA />

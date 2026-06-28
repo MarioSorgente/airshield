@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { FlaskConical, Check, ArrowRight, Share2 } from "lucide-react";
+import { FlaskConical, Check, ArrowRight, Share2, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import SectionShell from "@/components/SectionShell";
 import SectionHeader from "@/components/SectionHeader";
@@ -42,6 +43,7 @@ export default function BetaCTASection() {
     priceOpinion: "" as string,
     filterSubscription: "" as string,
     objection: "",
+    featureRequest: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -101,6 +103,7 @@ export default function BetaCTASection() {
         priceOpinion: (formData.priceOpinion as "yes" | "maybe" | "no") || undefined,
         filterSubscription: (formData.filterSubscription as "yes" | "maybe" | "no") || undefined,
         objection: formData.objection || undefined,
+        featureRequest: formData.featureRequest || undefined,
         sessionId: getSessionId(),
         utmSource: utm.utmSource,
         utmMedium: utm.utmMedium,
@@ -140,8 +143,8 @@ export default function BetaCTASection() {
       <SectionHeader
         icon={FlaskConical}
         eyebrow="Beta Program"
-        title="HELP DECIDE IF AIRSHIELD GETS BUILT."
-        description="Join the early-access list to test, reserve, or simply follow the build."
+        title="BE FIRST TO RIDE AIRSHIELD."
+        description="AirShield is in development now. Join the early-access list to test it first, reserve your unit, and help shape the launch."
       />
 
         {submitted ? (
@@ -347,6 +350,26 @@ export default function BetaCTASection() {
               />
             </div>
 
+            {/* Feature request — early-stage, open to feedback */}
+            <div className="space-y-2 rounded-2xl border border-[#00D4AA]/20 bg-[#00D4AA]/5 p-4">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Lightbulb className="w-4 h-4 text-[#00D4AA]" />
+                We're early — what would make AirShield perfect for you? (optional)
+              </label>
+              <p className="text-xs text-[#8A8A93]">
+                The design isn't locked. Glasses-friendly fit, a louder fan mode, a
+                specific colour, Bluetooth — tell us and it goes straight to the
+                build team.
+              </p>
+              <Textarea
+                placeholder="Your request or idea for the helmet..."
+                value={formData.featureRequest}
+                onChange={(e) => updateField("featureRequest", e.target.value)}
+                rows={3}
+                className="bg-[#13131A] border-[#1A1A22] text-[#F4F1EC] placeholder:text-[#8A8A93]"
+              />
+            </div>
+
             {/* Submit */}
             <Button
               onClick={handleSubmit}
@@ -358,7 +381,8 @@ export default function BetaCTASection() {
             </Button>
 
             <p className="text-xs text-center text-[#8A8A93]">
-              No spam. Your data helps us decide if AirShield gets built.
+              No spam. We contact early supporters first as access opens, and your
+              answers shape pricing and the launch city.
             </p>
           </div>
         )}
