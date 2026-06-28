@@ -123,9 +123,12 @@ export type ExposureCalculation = {
   daysPerWeek: number;
   trafficLevel: "light" | "normal" | "heavy";
   helmetType: "open_face" | "full_face" | "mask_under_helmet" | "no_mask";
+  workoutsPerWeek?: number;
   email?: string;
   weeklyHours?: string;
   yearlyHours?: string;
+  looksAnnual?: string;
+  wastedSessions?: number;
 };
 
 export function saveExposureCalculation(data: ExposureCalculation) {
