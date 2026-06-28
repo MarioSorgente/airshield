@@ -4,20 +4,20 @@ export type SectionMeta = { id: string; label: string };
 
 export const SECTIONS: SectionMeta[] = [
   { id: "hero", label: "Home" },
-  { id: "product", label: "Product" },
   { id: "problem", label: "The problem" },
-  { id: "use-cases", label: "Who it's for" },
-  { id: "pricing", label: "Pricing" },
   { id: "exposure-calculator", label: "Exposure" },
-  { id: "beta", label: "Beta" },
+  { id: "product", label: "Product" },
+  { id: "use-cases", label: "Who it's for" },
   { id: "science", label: "Science" },
+  { id: "pricing", label: "Pricing" },
+  { id: "beta", label: "Beta" },
 ];
 
-// Curated subset shown in the desktop top nav.
+// Curated subset shown in the desktop top nav (follows the scroll order).
 export const NAV_LINKS: SectionMeta[] = [
+  { id: "exposure-calculator", label: "Exposure" },
   { id: "product", label: "Product" },
   { id: "use-cases", label: "Who it's for" },
-  { id: "pricing", label: "Pricing" },
-  { id: "exposure-calculator", label: "Exposure" },
   { id: "science", label: "Science" },
+  { id: "pricing", label: "Pricing" },
 ];

@@ -57,6 +57,8 @@ export type WaitlistSignup = {
   filterSubscription?: "yes" | "maybe" | "no";
   objection?: string;
   variantPreference?: string;
+  // Free-text "what would you want in your helmet" — early-stage feedback.
+  featureRequest?: string;
   // Attribution — lets the dashboard tie a signup to its session + campaign.
   sessionId?: string;
   utmSource?: string;

@@ -2,10 +2,10 @@
   "product": "AirShield One",
   "model": {
     "path": "/product-visualizer/model/airshield-one.glb",
-    "available": false,
+    "available": true,
     "meshes": {
-      "shell": "helmet_shell",
-      "visor": "visor",
+      "shell": "Helmet_Shell_Main",
+      "visor": "Panoramic_Smoked_Visor",
       "filterHousing": "filter_housing",
       "filterCartridge": "filter_cartridge",
       "fanModule": "fan_module"
@@ -16,7 +16,7 @@
     "left": "/product-visualizer/photos/helmet-left.webp",
     "right": "/product-visualizer/photos/helmet-right.webp",
     "back": "/product-visualizer/photos/helmet-back.webp",
-    "filterCloseup": "/product-visualizer/photos/helmet-filter-closeup.webp",
+    "filterCloseup": "/product-visualizer/photos/helmet-fallback-cc0.jpg",
     "default": "/product-visualizer/photos/helmet-fallback-cc0.jpg",
     "illustrative": true
   },

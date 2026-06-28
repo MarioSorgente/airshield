@@ -17,6 +17,7 @@ type TrackingEvent =
   | "whatsapp_submitted"
   | "price_option_selected"
   | "variant_selected"
+  | "design_selected"
   | "filter_subscription_selected"
   | "use_case_selected"
   | "objection_selected"
@@ -41,6 +42,7 @@ const PERSISTED_EVENTS: ReadonlySet<TrackingEvent> = new Set<TrackingEvent>([
   "exposure_calculator_completed",
   "price_option_selected",
   "variant_selected",
+  "design_selected",
   "use_case_selected",
   "filter_subscription_selected",
 ]);

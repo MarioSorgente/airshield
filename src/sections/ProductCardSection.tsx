@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package, Fan, Filter, Battery, Bell, ArrowRight, Check, MessageCircle } from "lucide-react";
+import { Package, Fan, Filter, Battery, Bell, ArrowRight, Check, MessageCircle, ZoomIn, Box, Images } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,24 @@ import ProductVisualizer from "@/components/product-visualizer/ProductVisualizer
 import { trackEvent, storeFormData } from "@/lib/tracking";
 import { saveEarlyAccessReservation, saveVariantSelection } from "@/lib/airshieldDb";
 
-const variants = [
-  { name: "Matte Black", color: "#1a1a1a" },
-  { name: "White / Grey", color: "#d4d4d4" },
-  { name: "High-visibility", color: "#F5C842" },
-  { name: "Minimal Premium", color: "#2a2a2a" },
-  { name: "Sport Style", color: "#FF4D1C" },
+// Two candidate designs shown as full 6-angle galleries. The pick is a real
+// business signal — whichever design wins the vote is the one we build first —
+// so it's tracked as a `design_selected` event + a variant_selections write.
+const designs = [
+  {
+    id: "tourer",
+    name: "Tourer",
+    image: "/helmets/design-tourer.jpg",
+    tagline: "Rounded modular shell — calm, touring-first stance.",
+    accent: "#3A7CA5",
+  },
+  {
+    id: "sport",
+    name: "Aero Sport",
+    image: "/helmets/design-sport.jpg",
+    tagline: "Aggressive aero shell — sharp, sport-first stance.",
+    accent: "#00D4AA",
+  },
 ];
 
 const features = [
@@ -26,7 +38,9 @@ const features = [
 ];
 
 export default function ProductCardSection() {
-  const [selectedVariant, setSelectedVariant] = useState(variants[0].name);
+  const [selectedDesign, setSelectedDesign] = useState(designs[0].id);
+  const [view, setView] = useState<"angles" | "3d">("angles");
+  const [showZoom, setShowZoom] = useState(false);
   const [showReserveModal, setShowReserveModal] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [email, setEmail] = useState("");
@@ -36,15 +50,25 @@ export default function ProductCardSection() {
   const [saving, setSaving] = useState(false);
   const [modalType, setModalType] = useState<"reserve" | "whatsapp">("reserve");
 
-  const handleVariantSelect = async (variantName: string) => {
-    setSelectedVariant(variantName);
-    trackEvent("variant_selected", { variant: variantName });
-    try {
-      await saveVariantSelection({ variantName, email: email || undefined });
-    } catch {
-      // Silent fail - localStorage has backup
+  const design = designs.find((d) => d.id === selectedDesign) ?? designs[0];
+
+  // Only an explicit switch counts as a vote, so the default selection on mount
+  // doesn't skew the "which design to build first" tally.
+  const handleDesignSelect = async (designId: string) => {
+    if (designId === selectedDesign) {
+      setShowZoom(true);
+      return;
     }
-    storeFormData("variant_selection", { variant: variantName, timestamp: new Date().toISOString() });
+    setSelectedDesign(designId);
+    const picked = designs.find((d) => d.id === designId);
+    if (!picked) return;
+    trackEvent("design_selected", { design: picked.name });
+    try {
+      await saveVariantSelection({ variantName: picked.name, email: email || undefined });
+    } catch {
+      // Silent fail — localStorage has the backup below.
+    }
+    storeFormData("design_selection", { design: picked.name, timestamp: new Date().toISOString() });
   };
 
   const openReserveModal = () => {
@@ -71,13 +95,13 @@ export default function ProductCardSection() {
         email: email || undefined,
         whatsapp: whatsapp || undefined,
         city: city || undefined,
-        variant: selectedVariant,
+        variant: design.name,
       });
       if (modalType === "reserve") {
         trackEvent("email_submitted", { source: "product_card_reserve", email, city });
       }
       if (whatsapp) trackEvent("whatsapp_submitted", { source: "product_card", whatsapp });
-      storeFormData("product_card", { email, whatsapp, city, variant: selectedVariant, modalType, timestamp: new Date().toISOString() });
+      storeFormData("product_card", { email, whatsapp, city, design: design.name, modalType, timestamp: new Date().toISOString() });
       setSubmitted(true);
       setTimeout(() => {
         setShowReserveModal(false);
@@ -110,35 +134,97 @@ export default function ProductCardSection() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 p-6 lg:p-8">
-            {/* Product visual */}
-            <div className="space-y-6">
-              <ProductVisualizer selectedVariant={selectedVariant} />
-
-              {/* Variant selector */}
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-[#8A8A93] uppercase tracking-wider">
-                  Choose your style
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {variants.map((v) => (
-                    <button
-                      key={v.name}
-                      onClick={() => handleVariantSelect(v.name)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
-                        selectedVariant === v.name
-                          ? "border-[#00D4AA] bg-[#00D4AA]/10"
-                          : "border-[#1A1A22] hover:border-[#8A8A93]/50"
-                      }`}
-                    >
-                      <span
-                        className="w-4 h-4 rounded-full border border-[#8A8A93]/30"
-                        style={{ backgroundColor: v.color }}
-                      />
-                      <span className="text-sm">{v.name}</span>
-                    </button>
-                  ))}
-                </div>
+            {/* Product visual — interactive 3D model or the two-design angle gallery */}
+            <div className="space-y-5">
+              {/* View toggle: 3D model vs all-angles photos */}
+              <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#13131A] border border-[#1A1A22]">
+                {([
+                  { id: "angles" as const, label: "Angles", icon: Images },
+                  { id: "3d" as const, label: "3D model", icon: Box },
+                ]).map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={() => {
+                      setView(v.id);
+                      trackEvent("preset_view_selected", { view: v.id });
+                    }}
+                    className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      view === v.id
+                        ? "bg-[#00D4AA] text-[#060608]"
+                        : "text-[#8A8A93] hover:text-[#F4F1EC]"
+                    }`}
+                  >
+                    <v.icon className="w-4 h-4" />
+                    {v.label}
+                  </button>
+                ))}
               </div>
+
+              {view === "3d" ? (
+                <>
+                  <ProductVisualizer selectedVariant="Matte Black" />
+                  <p className="text-sm text-[#8A8A93]">
+                    Interactive engineering model of AirShield One — drag to rotate,
+                    scroll to zoom, and explore the filtration system.
+                  </p>
+                </>
+              ) : (
+                <>
+                  {/* Style chooser — selection is tracked silently for product planning */}
+                  <div className="space-y-1">
+                    <p className="font-mono-label text-xs text-[#00D4AA] uppercase tracking-wider">
+                      Choose your style
+                    </p>
+                    <p className="text-sm text-[#8A8A93]">
+                      Two shells, same filtration system inside. Pick the one that's you.
+                    </p>
+                  </div>
+
+                  {/* Design switcher */}
+                  <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#13131A] border border-[#1A1A22]">
+                    {designs.map((d) => (
+                      <button
+                        key={d.id}
+                        onClick={() => handleDesignSelect(d.id)}
+                        className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                          selectedDesign === d.id
+                            ? "bg-[#00D4AA] text-[#060608]"
+                            : "text-[#8A8A93] hover:text-[#F4F1EC]"
+                        }`}
+                      >
+                        {d.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* All-angles grid (click to zoom) */}
+                  <button
+                    onClick={() => setShowZoom(true)}
+                    className="group relative block w-full overflow-hidden rounded-2xl border border-[#1A1A22] bg-[#060608]"
+                    aria-label={`Zoom ${design.name} — all angles`}
+                  >
+                    <img
+                      src={design.image}
+                      alt={`AirShield One — ${design.name} design, six angles`}
+                      loading="lazy"
+                      className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#060608]/80 backdrop-blur-sm font-mono-label text-[10px] uppercase tracking-wider text-[#F4F1EC]">
+                      6 angles
+                    </span>
+                    <span className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#060608]/80 backdrop-blur-sm text-xs text-[#F4F1EC] opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ZoomIn className="w-3.5 h-3.5" /> Zoom
+                    </span>
+                  </button>
+
+                  <div className="flex items-start gap-2">
+                    <span className="mt-1.5 w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: design.accent }} />
+                    <p className="text-sm text-[#8A8A93]">
+                      <span className="text-[#F4F1EC] font-medium">{design.name}.</span> {design.tagline}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Product details */}
@@ -178,7 +264,7 @@ export default function ProductCardSection() {
                   onClick={openReserveModal}
                   className="w-full bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold py-5 rounded-lg transition-all hover:scale-[1.02]"
                 >
-                  Reserve early access
+                  Reserve the {design.name}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <Button
@@ -192,11 +278,27 @@ export default function ProductCardSection() {
               </div>
 
               <p className="text-xs text-center text-[#8A8A93]">
-                Reserve now to secure your place on the early-access list.
+                Reserve now to secure your early-access spot for the {design.name}.
               </p>
             </div>
           </div>
         </div>
+
+      {/* Zoom lightbox — full 6-angle grid */}
+      <Dialog open={showZoom} onOpenChange={setShowZoom}>
+        <DialogContent className="bg-[#0D0D10] border-[#1A1A22] text-[#F4F1EC] max-w-5xl p-3 sm:p-4">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-xl tracking-wide px-1">
+              {design.name.toUpperCase()} · ALL ANGLES
+            </DialogTitle>
+          </DialogHeader>
+          <img
+            src={design.image}
+            alt={`AirShield One — ${design.name} design, six angles enlarged`}
+            className="w-full rounded-xl border border-[#1A1A22]"
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Reserve Modal */}
       <Dialog open={showReserveModal} onOpenChange={setShowReserveModal}>
@@ -219,7 +321,7 @@ export default function ProductCardSection() {
           ) : (
             <div className="space-y-4 pt-4">
               <p className="text-sm text-[#8A8A93]">
-                Reserve your spot for the {selectedVariant} AirShield One.
+                Reserve your spot for the {design.name} AirShield One.
               </p>
               <Input
                 placeholder="Email address *"

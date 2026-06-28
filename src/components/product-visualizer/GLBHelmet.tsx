@@ -38,8 +38,23 @@ export default function GLBHelmet({
 }: GLBHelmetProps) {
   const { scene } = useGLTF(path) as unknown as { scene: THREE.Group };
 
-  // Clone the scene so multiple mounts / HMR don't share mutated transforms.
-  const root = useMemo(() => scene.clone(true), [scene]);
+  // Clone the scene so multiple mounts / HMR don't share mutated transforms,
+  // then normalise it: recenter on the origin and scale the largest dimension to
+  // ~0.62 units. The camera poses in HelmetScene assume a unit-sized model at the
+  // origin, so this lets ANY exported GLB (which may be offset / in metres) frame
+  // correctly without per-model tuning.
+  const root = useMemo(() => {
+    const inner = scene.clone(true);
+    const box = new THREE.Box3().setFromObject(inner);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    inner.position.sub(center); // recenter at origin
+    const group = new THREE.Group();
+    group.add(inner);
+    group.scale.setScalar(0.62 / maxDim);
+    return group;
+  }, [scene]);
 
   const cartridgeRef = useRef<THREE.Object3D | null>(null);
   const cartridgeBaseZ = useRef(0);

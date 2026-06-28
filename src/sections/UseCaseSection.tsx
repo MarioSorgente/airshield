@@ -88,8 +88,44 @@ export default function UseCaseSection() {
       <SectionHeader
         eyebrow="Segmentation"
         title="WHO IS AIRSHIELD FOR?"
-        description="Click the card that best describes you. This helps us understand which riders need AirShield most."
+        description="Find the rider that's you — and we'll tailor your early-access updates to how you ride."
       />
+
+      {/* Rider band — real people who breathe traffic every day */}
+      <div className="grid sm:grid-cols-2 gap-4 mb-10">
+        {[
+          {
+            src: "/riders/rider-male.jpg",
+            alt: "Daily rider holding his AirShield helmet",
+            overline: "Two hours a day, inches from the exhaust",
+            label: "The daily commuter",
+          },
+          {
+            src: "/riders/rider-female.jpg",
+            alt: "Rider holding her AirShield helmet",
+            overline: "Arrives glowing — not grey from the road",
+            label: "The everyday rider",
+          },
+        ].map((r) => (
+          <div
+            key={r.src}
+            className="relative overflow-hidden rounded-2xl border border-[#1A1A22] bg-[#0D0D10]"
+          >
+            <img
+              src={r.src}
+              alt={r.alt}
+              loading="lazy"
+              className="w-full aspect-[3/2] object-cover"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#060608] via-[#060608]/50 to-transparent p-4">
+              <p className="font-mono-label text-xs uppercase tracking-wider text-[#00D4AA]">
+                {r.overline}
+              </p>
+              <p className="text-sm text-[#F4F1EC] mt-0.5">{r.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Use case cards */}
         <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

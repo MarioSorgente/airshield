@@ -15,6 +15,8 @@ import {
   DollarSign,
   Users,
   Radio,
+  Package,
+  Lightbulb,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { firebaseReady, missingFirebaseEnv } from "@/lib/firebase";
@@ -307,6 +309,7 @@ function toCsv(data: DashboardData): string {
     "priceOpinion",
     "filterSubscription",
     "objection",
+    "featureRequest",
     "utmSource",
     "sessionId",
   ];
@@ -327,6 +330,7 @@ function toCsv(data: DashboardData): string {
       s.priceOpinion,
       s.filterSubscription,
       s.objection,
+      s.featureRequest,
       s.utmSource,
       s.sessionId,
     ]
@@ -390,6 +394,16 @@ function DashboardInner() {
       topUse: topAnswer(data.signups, "mainUse", USE_LABELS),
       topHelmet: topAnswer(data.signups, "currentHelmetType", HELMET_LABELS),
       topCity: topAnswer(data.signups, "city"),
+      topDesign: topAnswer(data.variantSelections, "variantName"),
+      designVotes: data.variantSelections.length,
+      feedback: data.signups
+        .filter((s) => typeof s.featureRequest === "string" && s.featureRequest.trim() !== "")
+        .map((s) => ({
+          text: (s.featureRequest as string).trim(),
+          name: s.name,
+          city: s.city,
+          at: s.createdAt,
+        })),
     };
   }, [data]);
 
@@ -581,6 +595,24 @@ function DashboardInner() {
                     : undefined
                 }
               />
+              <InsightCallout
+                tone="teal"
+                icon={Package}
+                headline={
+                  derived.topDesign
+                    ? `Build the ${derived.topDesign.label} first — it's leading with ${
+                        derived.designVotes > 0
+                          ? Math.round((derived.topDesign.count / derived.designVotes) * 100)
+                          : 0
+                      }% of design votes.`
+                    : "No design votes yet — the design switcher in the product section feeds this."
+                }
+                detail={
+                  derived.topDesign
+                    ? `${derived.topDesign.count} of ${derived.designVotes} design picks. This is your steer on which shell to engineer first.`
+                    : undefined
+                }
+              />
               <div className="grid gap-4 sm:grid-cols-2">
                 <BigStatCard
                   pct={derived.pay.yesPct}
@@ -626,12 +658,13 @@ function DashboardInner() {
                       tone="gold"
                     />
                     <Breakdown
-                      title="Variant preference"
+                      title="Design preference (build first)"
                       rows={answerBreakdown(
                         data.variantSelections,
                         "variantName"
                       )}
                       tone="gold"
+                      empty="No design votes yet. The product-section switcher records these."
                     />
                     <Breakdown
                       title="Use-case clicks"
@@ -709,6 +742,50 @@ function DashboardInner() {
                   </div>
                 </Panel>
               </div>
+            </section>
+
+            {/* ── Product feedback — early-stage feature requests ──── */}
+            <section className="space-y-4">
+              <SectionLabel
+                eyebrow="Product feedback"
+                title="What riders want built"
+                tone="teal"
+              />
+              <InsightCallout
+                tone="teal"
+                icon={Lightbulb}
+                headline={
+                  derived.feedback.length > 0
+                    ? `${derived.feedback.length} rider${
+                        derived.feedback.length === 1 ? "" : "s"
+                      } left a specific request for the helmet.`
+                    : "No feature requests yet — the beta form's “what would make it perfect” box feeds this."
+                }
+                detail={
+                  derived.feedback.length > 0
+                    ? "Raw, unprompted asks straight from sign-ups — your roadmap signal for what to build next."
+                    : undefined
+                }
+              />
+              {derived.feedback.length > 0 && (
+                <Panel title="Requests & ideas" hint={`${derived.feedback.length} total`}>
+                  <ul className="max-h-96 space-y-3 overflow-y-auto pr-1">
+                    {derived.feedback.map((f, i) => (
+                      <li
+                        key={i}
+                        className="rounded-xl border border-[#1A1A22] bg-[#0D0D10] p-3"
+                      >
+                        <p className="text-sm text-[#F4F1EC]">“{f.text}”</p>
+                        <p className="mt-1 text-xs text-[#8A8A93]">
+                          {[f.name, f.city, f.at ? f.at.toLocaleDateString() : null]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </Panel>
+              )}
             </section>
 
             {/* ── Traffic sources ──────────────────────────────────── */}
