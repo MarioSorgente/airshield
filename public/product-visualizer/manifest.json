@@ -1,38 +1,16 @@
 {
   "product": "AirShield One",
   "model": {
-    "path": "/product-visualizer/model/airshield-one.glb",
+    "path": "/product-visualizer/model/tourer.glb",
     "available": true,
     "fitSize": 0.42,
-    "rotationDeg": [0, 90, 0],
-    "fitMeshPrefix": "Shell_",
-    "shellMeshNames": [
-      "Shell_Crown_Dome",
-      "Shell_Crown_Ridge",
-      "Shell_Rear_Spoiler",
-      "Shell_Cheek_L",
-      "Shell_Cheek_R",
-      "Shell_Chin_Core",
-      "Shell_Chin_Front_Round",
-      "Shell_Jaw_Rail_L",
-      "Shell_Jaw_Rail_R",
-      "Shell_Chin_Lower_Lip",
-      "Shell_Neck_Skirt_L",
-      "Shell_Neck_Skirt_R",
-      "Shell_Rear_Vent_Block",
-      "Shell_Crease_1_L",
-      "Shell_Crease_2_L",
-      "Shell_Crease_1_R",
-      "Shell_Crease_2_R"
-    ],
-    "defaultHidePrefixes": ["ASM_", "EXP_", "AIR_", "VIS_"],
-    "exploreHidePrefixes": [],
+    "rotationDeg": [0, 215, 0],
     "meshes": {
-      "shell": "Shell_Crown_Dome",
-      "visor": "Shell_Visor",
-      "filterHousing": "filter_housing",
-      "filterCartridge": "filter_cartridge",
-      "fanModule": "fan_module"
+      "shell": "tmpozkvszpzobj",
+      "visor": "",
+      "filterHousing": "",
+      "filterCartridge": "",
+      "fanModule": ""
     }
   },
   "fallback": {
@@ -52,7 +30,7 @@
     { "name": "Sport Style", "hex": "#FF4D1C", "finish": "gloss" }
   ],
   "filterExplode": {
-    "available": true,
+    "available": false,
     "labels": [
       { "id": "intake", "text": "Rear down-facing intake" },
       { "id": "cartridge", "text": "PM filter cartridge (replaceable)" },

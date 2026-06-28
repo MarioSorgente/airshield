@@ -176,14 +176,16 @@ export default function ProductVisualizer({
             />
           ) : (
             <>
-              <button
-                type="button"
-                onClick={openExplore}
-                className="absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-lg border border-[#00D4AA]/40 bg-[#00D4AA]/10 px-3 py-1.5 text-xs font-medium text-[#00D4AA] backdrop-blur transition-colors hover:bg-[#00D4AA]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00D4AA]/60"
-              >
-                <Filter className="h-4 w-4" />
-                Explore filtration system
-              </button>
+              {activeManifest.filterExplode.available && (
+                <button
+                  type="button"
+                  onClick={openExplore}
+                  className="absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-lg border border-[#00D4AA]/40 bg-[#00D4AA]/10 px-3 py-1.5 text-xs font-medium text-[#00D4AA] backdrop-blur transition-colors hover:bg-[#00D4AA]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00D4AA]/60"
+                >
+                  <Filter className="h-4 w-4" />
+                  Explore filtration system
+                </button>
+              )}
 
               <p className="pointer-events-none absolute inset-x-0 bottom-16 z-20 text-center text-[11px] text-[#8A8A93]">
                 Drag to rotate · {isMobile ? "Pinch" : "Scroll"} to zoom
