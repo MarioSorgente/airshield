@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type Variants } from "framer-motion";
-import { Shield, ArrowRight, Info } from "lucide-react";
+import { Shield, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -107,7 +107,12 @@ export default function HeroSection() {
               <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl leading-[0.95] tracking-tight">
                 YOUR HELMET PROTECTS YOUR SKULL.
                 <br />
-                <span className="text-[#00D4AA]">WHAT PROTECTS YOUR LUNGS?</span>
+                <span
+                  className="text-[#00D4AA]"
+                  style={{ textShadow: "0 0 40px rgba(0,212,170,0.55), 0 0 90px rgba(0,212,170,0.3)" }}
+                >
+                  WHAT PROTECTS YOUR LUNGS?
+                </span>
               </h1>
               <p className="text-lg text-[#8A8A93] max-w-xl leading-relaxed">
                 Every day, Indonesian riders sit inches from exhaust, dust, and PM2.5.
@@ -117,17 +122,6 @@ export default function HeroSection() {
                 It doesn't stop at your lungs — it shows up in the mirror, in your workouts,
                 and in everything you buy to fix it.
               </p>
-            </motion.div>
-
-            {/* Price anchor */}
-            <motion.div variants={reduce ? undefined : fadeUp} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#13131A] border border-[#1A1A22] w-fit">
-              <Info className="w-5 h-5 text-[#F5C842]" />
-              <div>
-                <p className="text-sm text-[#8A8A93]">Target launch price</p>
-                <p className="text-xl font-bold text-[#F4F1EC]">
-                  Rp 3.2M <span className="text-sm font-normal text-[#8A8A93]">/ approx. $200</span>
-                </p>
-              </div>
             </motion.div>
 
             {/* CTAs */}
@@ -169,14 +163,14 @@ export default function HeroSection() {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           >
             <div className="relative">
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-[#00D4AA]/20 rounded-full blur-[100px] scale-75 animate-pulse" />
-              {/* Hero image — rider shot with built-in feature call-outs */}
+              {/* Hero image — rider shot with built-in feature call-outs and price
+                  badge baked in; it carries its own radial glow so it blends into
+                  the page background with no card border. */}
               <motion.img
-                src="/hero-main.jpg"
-                alt="Rider on a motorbike wearing the AirShield filtration helmet, with integrated fan-assisted filtration, replaceable filter cartridge, and USB-C rechargeable battery"
+                src="/hero-main-2.jpg"
+                alt="Rider on a motorbike wearing the AirShield filtration helmet — integrated fan-assisted filtration, replaceable filter cartridge, and USB-C rechargeable battery. Target launch price Rp 3.2M / approx. $200"
                 style={reduce ? undefined : { y: imgY, scale: imgScale }}
-                className="relative z-10 w-full max-w-xl lg:max-w-2xl rounded-2xl shadow-2xl shadow-[#00D4AA]/10"
+                className="relative z-10 w-full max-w-md lg:max-w-lg"
               />
             </div>
           </motion.div>
