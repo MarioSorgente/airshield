@@ -95,7 +95,7 @@ export default function HeroSection() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
       >
         <motion.img
-          src="/hero-main-3.jpg"
+          src="/main_4.jpg"
           alt="Rider on a motorbike wearing the AirShield filtration helmet — integrated fan-assisted filtration, replaceable filter cartridge, and USB-C rechargeable battery"
           style={reduce ? undefined : { y: imgY, scale: imgScale }}
           className="h-full w-full object-cover object-[68%_center] lg:object-[center_center]"
