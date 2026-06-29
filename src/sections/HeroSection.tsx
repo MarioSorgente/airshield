@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type Variants } from "framer-motion";
-import { Shield, Wind, Zap, ArrowRight, Info } from "lucide-react";
+import { Shield, ArrowRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -171,32 +171,13 @@ export default function HeroSection() {
             <div className="relative">
               {/* Glow effect */}
               <div className="absolute inset-0 bg-[#00D4AA]/20 rounded-full blur-[100px] scale-75 animate-pulse" />
-              {/* Helmet image */}
+              {/* Hero image — rider shot with built-in feature call-outs */}
               <motion.img
-                src="/hero-helmet.jpg"
-                alt="AirShield Helmet - Full-face motorcycle helmet with integrated air filtration"
+                src="/hero-main.jpg"
+                alt="Rider on a motorbike wearing the AirShield filtration helmet, with integrated fan-assisted filtration, replaceable filter cartridge, and USB-C rechargeable battery"
                 style={reduce ? undefined : { y: imgY, scale: imgScale }}
-                className="relative z-10 w-full max-w-md lg:max-w-lg rounded-2xl shadow-2xl shadow-[#00D4AA]/10"
+                className="relative z-10 w-full max-w-xl lg:max-w-2xl rounded-2xl shadow-2xl shadow-[#00D4AA]/10"
               />
-              {/* Floating feature badges */}
-              <div className="absolute -left-4 top-1/4 z-20 px-3 py-2 rounded-lg bg-[#13131A]/90 backdrop-blur-sm border border-[#1A1A22] shadow-lg">
-                <div className="flex items-center gap-2">
-                  <Wind className="w-4 h-4 text-[#00D4AA]" />
-                  <span className="text-xs font-medium">H13 HEPA Filter</span>
-                </div>
-              </div>
-              <div className="absolute -right-4 top-1/3 z-20 px-3 py-2 rounded-lg bg-[#13131A]/90 backdrop-blur-sm border border-[#1A1A22] shadow-lg">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[#F5C842]" />
-                  <span className="text-xs font-medium">USB-C Rechargeable</span>
-                </div>
-              </div>
-              <div className="absolute left-1/4 -bottom-4 z-20 px-3 py-2 rounded-lg bg-[#13131A]/90 backdrop-blur-sm border border-[#1A1A22] shadow-lg">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#00D4AA]" />
-                  <span className="text-xs font-medium">Positive Pressure Airflow</span>
-                </div>
-              </div>
             </div>
           </motion.div>
         </div>
