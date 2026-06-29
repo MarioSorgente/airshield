@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type Variants } from "framer-motion";
-import { Shield, ArrowRight } from "lucide-react";
+import { Shield, ArrowRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -85,11 +85,31 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-br from-[#060608] via-[#0D0D10] to-[#13131A]" />
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#00D4AA]/5 to-transparent" />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Content */}
+      {/* Rider image — full-bleed backdrop the text sits on top of (single layered
+          composition, not a separate column). Anchored right so the rider stays on
+          the right; a left-to-right dark gradient keeps the headline readable. */}
+      <motion.div
+        className="pointer-events-none absolute inset-y-0 right-0 z-0 w-full lg:w-[64%]"
+        initial={reduce ? false : { opacity: 0, scale: 1.04 }}
+        animate={reduce ? undefined : { opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+      >
+        <motion.img
+          src="/hero-main-3.jpg"
+          alt="Rider on a motorbike wearing the AirShield filtration helmet — integrated fan-assisted filtration, replaceable filter cartridge, and USB-C rechargeable battery"
+          style={reduce ? undefined : { y: imgY, scale: imgScale }}
+          className="h-full w-full object-cover object-[68%_center] lg:object-[center_center]"
+        />
+        {/* Left fade → text contrast; bottom fade → seats the price badge */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/70 to-[#060608]/10 lg:via-[#060608]/35 lg:to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[#060608] to-transparent" />
+      </motion.div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[88vh] flex items-center py-16">
+        <div className="w-full">
+          {/* Content — overlaps the image */}
           <motion.div
-            className="space-y-8"
+            className="max-w-xl lg:max-w-2xl space-y-8"
             variants={reduce ? undefined : heroContainer}
             initial={reduce ? false : "hidden"}
             animate={reduce ? undefined : "show"}
@@ -154,27 +174,23 @@ export default function HeroSection() {
               </p>
             </motion.div>
           </motion.div>
-
-          {/* Right: Product image */}
-          <motion.div
-            className="relative flex justify-center lg:justify-end"
-            initial={reduce ? false : { opacity: 0, scale: 0.92 }}
-            animate={reduce ? undefined : { opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          >
-            <div className="relative">
-              {/* Hero image — rider shot with built-in feature call-outs and price
-                  badge baked in; it carries its own radial glow so it blends into
-                  the page background with no card border. */}
-              <motion.img
-                src="/hero-main-2.jpg"
-                alt="Rider on a motorbike wearing the AirShield filtration helmet — integrated fan-assisted filtration, replaceable filter cartridge, and USB-C rechargeable battery. Target launch price Rp 3.2M / approx. $200"
-                style={reduce ? undefined : { y: imgY, scale: imgScale }}
-                className="relative z-10 w-full max-w-md lg:max-w-lg"
-              />
-            </div>
-          </motion.div>
         </div>
+
+        {/* Price badge — floats over the image, bottom-right (matches the example) */}
+        <motion.div
+          variants={reduce ? undefined : fadeUp}
+          initial={reduce ? false : "hidden"}
+          animate={reduce ? undefined : "show"}
+          className="absolute bottom-10 right-4 sm:right-6 lg:right-8 z-20 flex items-center gap-3 rounded-xl border border-[#1A1A22] bg-[#0D0D10]/85 px-4 py-3 backdrop-blur-sm"
+        >
+          <Info className="w-5 h-5 text-[#F5C842]" />
+          <div>
+            <p className="text-sm text-[#8A8A93]">Target launch price</p>
+            <p className="text-xl font-bold text-[#F4F1EC]">
+              Rp 3.2M <span className="text-sm font-normal text-[#8A8A93]">/ approx. $200</span>
+            </p>
+          </div>
+        </motion.div>
       </div>
 
       {/* Reserve Modal */}
