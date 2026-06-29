@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type Variants } from "framer-motion";
-import { Shield, ArrowRight, Info } from "lucide-react";
+import { Shield, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -176,21 +176,6 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Price badge — floats over the image, bottom-right (matches the example) */}
-        <motion.div
-          variants={reduce ? undefined : fadeUp}
-          initial={reduce ? false : "hidden"}
-          animate={reduce ? undefined : "show"}
-          className="absolute bottom-10 right-4 sm:right-6 lg:right-8 z-20 flex items-center gap-3 rounded-xl border border-[#1A1A22] bg-[#0D0D10]/85 px-4 py-3 backdrop-blur-sm"
-        >
-          <Info className="w-5 h-5 text-[#F5C842]" />
-          <div>
-            <p className="text-sm text-[#8A8A93]">Target launch price</p>
-            <p className="text-xl font-bold text-[#F4F1EC]">
-              Rp 3.2M <span className="text-sm font-normal text-[#8A8A93]">/ approx. $200</span>
-            </p>
-          </div>
-        </motion.div>
       </div>
 
       {/* Reserve Modal */}
