@@ -145,7 +145,7 @@ export default function HeroSection() {
             </motion.div>
 
             {/* CTAs */}
-            <motion.div variants={reduce ? undefined : fadeUp} className="flex flex-col sm:flex-row gap-4">
+            <motion.div variants={reduce ? undefined : fadeUp} className="flex flex-col sm:flex-row gap-4 max-w-sm lg:max-w-md">
               <Button
                 onClick={handleReserve}
                 className="bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#060608] font-semibold px-8 py-6 text-base rounded-lg transition-all hover:scale-105"
